@@ -17,7 +17,11 @@ import java.util.*
 
 const val GOLEM_URL = "https://www.golem.de"
 const val GOLEM_ARTICLE_CLASS = "media__teaser media__teaser--articles hentry"
-const val GOLEM_ARTICLE_HEADING_CLASS = "\"media__headline entry-title\""
+const val GOLEM_MAIN_CLASS = "leader"
+const val GOLEM_ARTICLE_PRE_HEADING_CLASS = "media__kicker"
+const val GOLEM_ARTICLE_HEADING_CLASS = "media__headline-text"
+const val GOLEM_MAIN_PRE_HEADING_CLASS = "head-meta"
+const val GOLEM_MAIN_HEADING_CLASS = "head-main"
 const val GOLEM_ARTICLE_LINK_CLASS = "media__link"
 const val GOLEM_ARTICLE_LINK_REL = "bookmark"
 const val GOLEM_ARTICLE_IMAGE_CLASS = "photo"
@@ -52,7 +56,9 @@ class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>(
         val articles = ArrayList<Article>()
         val elements = doc.getElementsByClass(GOLEM_ARTICLE_CLASS)
 
+        articles.add(getMainArticle(doc))
         elements.forEach{elem ->
+            val preHeading = getPreHeading(elem)
             val heading = getHeading(elem)
             val url = getUrl(elem)
             val description = getDescription(elem)
@@ -62,15 +68,43 @@ class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>(
             val date = authorAndDate.second
             val amountOfComments = getAmountOfComments(elem)
 
-            articles.add(Article(heading, url, description, image, date, author, amountOfComments))
+            articles.add(Article(preHeading, heading, url, description, image, date, author, amountOfComments))
         }
 
         return articles
     }
 
+    private fun getMainArticle(doc: Document) : Article {
+        val elements = doc.getElementsByClass(GOLEM_MAIN_CLASS)
+
+        val preHeading = elements.select("h2[class=$GOLEM_MAIN_PRE_HEADING_CLASS]")?.first()?.text()
+                ?: throw ParseException("Could not parse pre-heading for main article")
+        val heading = elements.select("h1[class=$GOLEM_MAIN_HEADING_CLASS]")?.first()?.text()
+                ?: throw ParseException("Could not parse heading for main article")
+        val url = elements.select("a")?.first()?.attr("href")
+                ?: throw ParseException("Could not parse url for main article")
+        val description = elements.select("p")?.first()?.text()
+                ?: throw ParseException("Could not parse description for main article")
+        val image = urlToDrawable(elements.select("img")?.attr("src")
+                ?: throw ParseException("Could not parse image url for main article"))
+        val authorAndDate = getAuthorAndDate(url)
+        val author = authorAndDate.first
+        val date = authorAndDate.second
+        val amountOfComments = parseCommentString(elements.select("p")[1]?.text()
+                ?: throw ParseException("Could not parse amount of comments for main article"))
+
+
+        return Article(preHeading, heading, URL(url), description, image, date, author, amountOfComments)
+    }
+
+    private fun getPreHeading(elem : Element) : String {
+        return elem.select("span[class=$GOLEM_ARTICLE_PRE_HEADING_CLASS]")?.first()?.text()
+                ?: throw ParseException("Could not parse pre-heading for elem $elem")
+    }
+
     private fun getHeading(elem : Element) : String {
-        return elem.select("h2[class=$GOLEM_ARTICLE_HEADING_CLASS]")?.first()?.text()
-            ?: throw ParseException("Could not parse heading for elem $elem")
+        return elem.select("span[class=$GOLEM_ARTICLE_HEADING_CLASS]")?.first()?.text()
+                ?: throw ParseException("Could not parse heading for elem $elem")
     }
 
     private fun getUrl(elem : Element) : URL {
@@ -80,26 +114,16 @@ class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>(
     }
 
     private fun getImage(elem : Element) : Drawable {
-        // used to return a default image when the online one can not be retrieved
-        fun getDefaultDrawable() : Drawable {
-            return ContextCompat.getDrawable(activity!!.get()!!.applicationContext, R.drawable.tooltip_frame_dark)!!
-        }
-
         var imageString = elem.select("img[class=$GOLEM_ARTICLE_IMAGE_CLASS]")
                 ?.attr("src")
 
         if (imageString == null || imageString == "") {
             imageString = elem.select("img[class=$GOLEM_ARTICLE_IMAGE_CLASS_ALT]")
                     ?.attr("data-src")
-                    ?: return getDefaultDrawable()
+                    ?: return urlToDrawable(null)
         }
 
-        return try {
-            Drawable.createFromStream(URL(imageString).content as InputStream, null)
-        }
-        catch (e : Exception) {
-            getDefaultDrawable()
-        }
+        return urlToDrawable(imageString)
     }
 
     private fun getDescription(elem: Element) : String {
@@ -111,13 +135,7 @@ class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>(
         val parsedString = elem.select("a[class=$GOLEM_ARTICLE_COMMENT_COUNT_CLASS]")?.text()
                 ?: throw ParseException("Could not get comment amount string for elem $elem")
 
-        return try {
-            parsedString.split(" ")[0].toInt()
-        } catch (nfe: NumberFormatException) {
-            throw ParseException("Could not cast $parsedString to Int.")
-        } catch (be: ArrayIndexOutOfBoundsException) {
-            throw ParseException("Could not split $parsedString at whitespace.")
-        }
+        return parseCommentString(parsedString)
     }
 
     private fun getAuthorAndDate(url: String) : Pair<String, Date> {
@@ -142,5 +160,41 @@ class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>(
         val con = Jsoup.connect(url)
         con.cookie("golem_view", "mobile") //ensure mobile view
         return con.get()
+    }
+
+    /**
+     * Parses comment string (e.g. "42 Kommentare") to get the amount of comments (e.g. 42).
+     * @return The amount of comments.
+     */
+    private fun parseCommentString(string: String) : Int {
+        return try {
+            string.split(" ")[0].toInt()
+        } catch (nfe: NumberFormatException) {
+            throw ParseException("Could not cast $string to Int.")
+        } catch (be: ArrayIndexOutOfBoundsException) {
+            throw ParseException("Could not split $string at whitespace.")
+        }
+    }
+
+    /**
+     * Expects an URL in form of a String an tries to get the image in form of a Drawable. If
+     * it can not resolve the image behind the URL, it returns a default Drawable.
+     * @return The URL where the image is.
+     */
+    private fun urlToDrawable(urlString: String?) : Drawable {
+        fun getDefaultDrawable() : Drawable {
+            //TODO: use proper default image
+            return ContextCompat.getDrawable(activity!!.get()!!.applicationContext, R.drawable.tooltip_frame_dark)!!
+        }
+
+        if (urlString == null || urlString == "") {
+            return getDefaultDrawable()
+        }
+
+        return try {
+            Drawable.createFromStream(URL(urlString).content as InputStream, null)
+        } catch (e : Exception) {
+            getDefaultDrawable()
+        }
     }
 }
