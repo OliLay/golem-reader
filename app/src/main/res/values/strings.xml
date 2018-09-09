@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Golem Reader</string>
     <string name="refresh">Aktualisieren</string>
+    <string name="image_description">Vorschau</string>
 </resources>

@@ -2,18 +2,23 @@ package olilay.com.golemreader.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.ListView
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import olilay.com.golemreader.R
 import olilay.com.golemreader.parser.TickerParser
 import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import olilay.com.golemreader.adapter.ArticleAdapter
 
 
 class OverviewActivity : AppCompatActivity() {
-    private var listView : ListView? = null
+    private var recyclerView: RecyclerView? = null
+    private var viewManager: RecyclerView.LayoutManager? = null
+    private var tickerParser : TickerParser? = null
+    private var refreshing : Boolean = false
 
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,20 +26,54 @@ class OverviewActivity : AppCompatActivity() {
 
         val toolbar : Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        listView = findViewById(R.id.listview_news)
 
+        //CARD VIEW
+        viewManager = LinearLayoutManager(this)
+
+        recyclerView = findViewById<RecyclerView>(R.id.overview_recycler_view).apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+        }
+
+        refresh()
+    }
+
+    private fun refresh() {
+        if (!refreshing) {
+            refreshing = true
+            setViewVisiblity(true, R.id.overview_progress_bar)
+            setViewVisiblity(false, R.id.overview_recycler_view)
+
+            tickerParser = TickerParser(this)
+            tickerParser?.execute()
+                    ?: throw NullPointerException("TickerParser is null when trying to refresh!")
+        }
+    }
+
+    fun refreshFinished() {
+        refreshing = false
+        setViewVisiblity(false, R.id.overview_progress_bar)
+        setViewVisiblity(true, R.id.overview_recycler_view)
         try {
-            val articles = TickerParser(this).execute().get()
+            val articles = tickerParser!!.get()
 
             if (articles.isEmpty()) {
                 System.out.println("No articles!")
             } else {
-                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, articles)
-                listView?.adapter = adapter
+                recyclerView?.adapter = ArticleAdapter(articles)
             }
+        } catch (e : Exception) {
+            Toast.makeText(this, "Something went horrible wrong!!", Toast.LENGTH_LONG).show()
         }
-        catch (e : Exception) {
-            System.out.println("Something went horrible wrong!!")
+    }
+
+    private fun setViewVisiblity(visible: Boolean, viewId: Int) {
+        val view : View = findViewById(viewId)
+
+        if (visible) {
+            view.visibility = View.VISIBLE
+        } else {
+            view.visibility = View.INVISIBLE
         }
     }
 
@@ -44,15 +83,10 @@ class OverviewActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
-
         if (id == R.id.action_refresh) {
-            Toast.makeText(this, "Action clicked", Toast.LENGTH_LONG).show()
-            return true
+            refresh()
         }
 
         return super.onOptionsItemSelected(item)

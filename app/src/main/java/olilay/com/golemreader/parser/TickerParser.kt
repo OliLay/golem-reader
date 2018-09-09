@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
 import olilay.com.golemreader.R
+import olilay.com.golemreader.activities.OverviewActivity
 import olilay.com.golemreader.models.Article
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -35,8 +36,8 @@ const val GOLEM_ARTICLE_AUTHOR = "authors__name"
  * Performs async network tasks to get and parse articles from Golem.de.
  * @author Oliver Layer
  */
-class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>() {
-    private var activity : WeakReference<Activity>? = null
+class TickerParser(activity : OverviewActivity)  : AsyncTask<Void, Void, List<Article>>() {
+    private var activity : WeakReference<OverviewActivity>? = null
 
     init {
         this.activity = WeakReference(activity)
@@ -44,6 +45,13 @@ class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>(
 
     override fun doInBackground(vararg void : Void) : List<Article> {
         return parse()
+    }
+
+    override fun onPostExecute(result: List<Article>?) {
+        super.onPostExecute(result)
+
+        activity?.get()?.refreshFinished()
+            ?: throw NullPointerException("OverviewActivity is null. Can't call refreshFinished().")
     }
 
     /**
@@ -70,6 +78,8 @@ class TickerParser(activity : Activity)  : AsyncTask<Void, Void, List<Article>>(
 
             articles.add(Article(preHeading, heading, url, description, image, date, author, amountOfComments))
         }
+
+        articles.sortByDescending { article -> article.date }
 
         return articles
     }
