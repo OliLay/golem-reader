@@ -1,2 +1,2 @@
 # golem-reader
-Newsreader
+Android newsreader for reading articles from https://golem.de. 
