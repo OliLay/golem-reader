@@ -12,14 +12,15 @@ data class Article (val preHeading : String,
                     val thumbnail : Drawable,
                     val date : Date,
                     val author : String,
-                    val amountOfComments : Int) {
+                    val amountOfComments : Int,
+                    val content : String) {
 
     fun getFullHeading() : String {
         return "$preHeading: $heading"
     }
 
     fun getDateString() : String {
-        val df = SimpleDateFormat("E, d. MMM", Locale.GERMANY)
+        val df = SimpleDateFormat("E, d.M", Locale.GERMANY)
         return df.format(date)
     }
 

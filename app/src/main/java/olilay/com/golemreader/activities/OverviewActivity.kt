@@ -1,12 +1,10 @@
 package olilay.com.golemreader.activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import olilay.com.golemreader.R
 import olilay.com.golemreader.parser.TickerParser
-import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import android.view.Menu
 import android.view.MenuItem
@@ -14,18 +12,16 @@ import android.view.View
 import olilay.com.golemreader.adapter.ArticleAdapter
 
 
-class OverviewActivity : AppCompatActivity() {
+class OverviewActivity : AppActivity() {
     private var recyclerView: RecyclerView? = null
     private var viewManager: RecyclerView.LayoutManager? = null
     private var tickerParser : TickerParser? = null
     private var refreshing : Boolean = false
 
     override fun onCreate(savedInstanceState : Bundle?) {
-        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_overview)
+        super.onCreate(savedInstanceState)
 
-        val toolbar : Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
 
         //CARD VIEW
         viewManager = LinearLayoutManager(this)

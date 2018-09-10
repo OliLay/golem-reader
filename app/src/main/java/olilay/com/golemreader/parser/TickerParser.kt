@@ -1,6 +1,5 @@
 package olilay.com.golemreader.parser
 
-import android.app.Activity
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
@@ -32,6 +31,13 @@ const val GOLEM_ARTICLE_COMMENT_COUNT_CLASS = "icon comment-count"
 const val GOLEM_ARTICLE_DATE = "authors__pubdate"
 const val GOLEM_ARTICLE_AUTHOR = "authors__name"
 
+
+//TODO: refactor: architecture
+//TODO: feat: only load 10 first articles
+//TODO: bug: parsing amount of comments sometimes fails
+//TODO: refactor: add missing consts, maybe own class for all consts
+//TODO: feat: support 2 page articles
+//TODO: feat: support slide shows (means not showing them :D )
 /**
  * Performs async network tasks to get and parse articles from Golem.de.
  * @author Oliver Layer
@@ -71,12 +77,13 @@ class TickerParser(activity : OverviewActivity)  : AsyncTask<Void, Void, List<Ar
             val url = getUrl(elem)
             val description = getDescription(elem)
             val image = getImage(elem)
-            val authorAndDate = getAuthorAndDate(url.toString())
-            val author = authorAndDate.first
-            val date = authorAndDate.second
+            val authorAndDateAndContent = getAuthorAndDateAndContent(url.toString())
+            val author = authorAndDateAndContent.first
+            val date = authorAndDateAndContent.second
+            val content = authorAndDateAndContent.third
             val amountOfComments = getAmountOfComments(elem)
 
-            articles.add(Article(preHeading, heading, url, description, image, date, author, amountOfComments))
+            articles.add(Article(preHeading, heading, url, description, image, date, author, amountOfComments, content))
         }
 
         articles.sortByDescending { article -> article.date }
@@ -97,14 +104,14 @@ class TickerParser(activity : OverviewActivity)  : AsyncTask<Void, Void, List<Ar
                 ?: throw ParseException("Could not parse description for main article")
         val image = urlToDrawable(elements.select("img")?.attr("src")
                 ?: throw ParseException("Could not parse image url for main article"))
-        val authorAndDate = getAuthorAndDate(url)
-        val author = authorAndDate.first
-        val date = authorAndDate.second
+        val authorAndDateAndContent = getAuthorAndDateAndContent(url)
+        val author = authorAndDateAndContent.first
+        val date = authorAndDateAndContent.second
+        val content = authorAndDateAndContent.third
         val amountOfComments = parseCommentString(elements.select("p")[1]?.text()
                 ?: throw ParseException("Could not parse amount of comments for main article"))
 
-
-        return Article(preHeading, heading, URL(url), description, image, date, author, amountOfComments)
+        return Article(preHeading, heading, URL(url), description, image, date, author, amountOfComments, content)
     }
 
     private fun getPreHeading(elem : Element) : String {
@@ -148,7 +155,7 @@ class TickerParser(activity : OverviewActivity)  : AsyncTask<Void, Void, List<Ar
         return parseCommentString(parsedString)
     }
 
-    private fun getAuthorAndDate(url: String) : Pair<String, Date> {
+    private fun getAuthorAndDateAndContent(url: String) : Triple<String, Date, String> {
         val doc = getDocument(url)
         val dateString = doc.select("time[class=$GOLEM_ARTICLE_DATE]")?.text()
                 ?: throw ParseException("Could not get the date from $url")
@@ -159,7 +166,19 @@ class TickerParser(activity : OverviewActivity)  : AsyncTask<Void, Void, List<Ar
         val author = doc.select("span[class=$GOLEM_ARTICLE_AUTHOR]")?.text()
                 ?: throw ParseException("Could not get the author from $url")
 
-        return Pair(author, date)
+        val commentLink = doc.select("p[class=link-comments]")?.html()
+        val content = doc.select("article")
+                ?: throw ParseException("Could not get content from $url")
+        content.select("figure[class=hero]")?.remove()
+        content.select("img")?.remove()
+        content.select("div[class=authors authors--withsource]")?.remove()
+        content.select("p")?.first()?.remove()
+        content.select("ul[class=social-tools]")?.remove()
+        content.select("div[class=tags]")?.remove()
+
+        val html = content.html() + commentLink
+
+        return Triple(author, date, html)
     }
 
     /**
