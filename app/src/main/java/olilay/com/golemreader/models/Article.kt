@@ -5,15 +5,16 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class Article (val preHeading : String,
-                    val heading : String,
-                    val url : URL,
-                    val description : String,
-                    val thumbnail : Drawable,
-                    val date : Date,
-                    val author : String,
-                    val amountOfComments : Int,
-                    val content : String) {
+data class Article (var preHeading : String,
+                    var heading : String,
+                    var url : URL,
+                    var description : String,
+                    var thumbnail : Drawable,
+                    var date : Date,
+                    var author : String,
+                    var amountOfComments : Int,
+                    var content : String) {
+
 
     fun getFullHeading() : String {
         return "$preHeading: $heading"
