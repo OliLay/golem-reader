@@ -27,7 +27,7 @@ class ArticleAdapter(private val dataset: List<Article>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = dataset[position]
 
-        holder.cardView.article_heading.text = item.getFullHeading()
+        holder.cardView.article_heading.text = item.heading
         holder.cardView.article_description.text = item.description
         holder.cardView.article_photo.setImageDrawable(item.thumbnail)
         holder.cardView.article_text_comment.text = item.amountOfComments.toString()

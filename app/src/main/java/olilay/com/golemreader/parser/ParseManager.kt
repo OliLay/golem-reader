@@ -3,8 +3,14 @@ package olilay.com.golemreader.parser
 import android.os.AsyncTask
 import olilay.com.golemreader.activities.OverviewActivity
 import olilay.com.golemreader.models.Article
+import olilay.com.golemreader.models.MinimalArticle
 import org.jsoup.nodes.Element
 import java.lang.ref.WeakReference
+
+//TODO: feat: only load first X articles, load others when needed
+//TODO: bug: parsing amount of comments sometimes fails
+//TODO: feat: support 2 page articles
+//TODO: feat: support slide shows (means not showing them :D )
 
 class ParseManager(activity: OverviewActivity) {
     var parsing : Boolean = false
@@ -24,16 +30,17 @@ class ParseManager(activity: OverviewActivity) {
             parsing = true
             articles.clear()
 
-            TickerParser(this).execute()
+            RssParser(this).execute()
+            //TickerParser(this).execute()
         }
     }
 
-    fun onTickerParsed(elems : List<Element>) {
-        elems.forEach { elem ->
-            ArticleParser(elem, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+    fun onTickerParsed(minimalArticles: List<MinimalArticle>) {
+        minimalArticles.forEach { minimalArticle ->
+            ArticleParser(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         }
 
-        expectedArticleAmount = elems.size
+        expectedArticleAmount = minimalArticles.size
     }
 
     fun onArticleParsed(article: Article) {
@@ -47,6 +54,7 @@ class ParseManager(activity: OverviewActivity) {
     private fun onEveryArticleParsed() {
         parsing = false
         expectedArticleAmount = -1
+        articles.sortByDescending { a -> a.date }
         activity!!.get()!!.onRefreshFinished(articles)
     }
 

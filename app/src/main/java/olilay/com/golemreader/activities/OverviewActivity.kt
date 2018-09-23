@@ -15,7 +15,7 @@ import olilay.com.golemreader.parser.ParseManager
 
 class OverviewActivity : AppActivity() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var layoutManager: LinearLayoutManager
     private lateinit var refreshLayout: SwipeRefreshLayout
     private lateinit var parseManager : ParseManager
 
@@ -28,12 +28,12 @@ class OverviewActivity : AppActivity() {
         refreshLayout.setOnRefreshListener{ refresh() }
 
         //CARD VIEW
-        viewManager = LinearLayoutManager(this)
+        layoutManager = LinearLayoutManager(this)
 
-        recyclerView = findViewById<RecyclerView>(R.id.overview_recycler_view).apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-        }
+        recyclerView = findViewById(R.id.overview_recycler_view)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.setHasFixedSize(true)
+        setRecyclerViewScrollListener()
 
         //PARSE MANAGER
         parseManager = ParseManager(this)
@@ -45,25 +45,25 @@ class OverviewActivity : AppActivity() {
         refreshLayout.isRefreshing = false //make SwipeRefreshLayout loading animation disappear
 
         if (!parseManager.parsing) {
-            setViewVisiblity(true, R.id.overview_progress_bar)
-            setViewVisiblity(false, R.id.overview_recycler_view)
+            setViewVisibility(true, R.id.overview_progress_bar)
+            setViewVisibility(false, R.id.overview_recycler_view)
 
             parseManager.startParse()
         }
     }
 
     fun onRefreshFinished(articles : List<Article>) {
-        setViewVisiblity(false, R.id.overview_progress_bar)
-        setViewVisiblity(true, R.id.overview_recycler_view)
+        setViewVisibility(false, R.id.overview_progress_bar)
+        setViewVisibility(true, R.id.overview_recycler_view)
 
         if (articles.isEmpty()) {
             System.out.println("No articles!")
         } else {
-            recyclerView?.adapter = ArticleAdapter(articles)
+            recyclerView.adapter = ArticleAdapter(articles)
         }
     }
 
-    private fun setViewVisiblity(visible: Boolean, viewId: Int) {
+    private fun setViewVisibility(visible: Boolean, viewId: Int) {
         val view : View = findViewById(viewId)
 
         if (visible) {
@@ -79,12 +79,18 @@ class OverviewActivity : AppActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-
-        if (id == R.id.action_refresh) {
+        if (item.itemId == R.id.action_refresh) {
             refresh()
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setRecyclerViewScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
     }
 }
