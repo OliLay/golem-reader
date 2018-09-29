@@ -8,12 +8,18 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import org.xmlpull.v1.XmlPullParserFactory
+import java.lang.Exception
 
 const val GOLEM_RSS_URL = "https://rss.golem.de/rss.php?feed=RSS2.0"
 
 class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void, List<MinimalArticle>>() {
     override fun doInBackground(vararg void : Void) : List<MinimalArticle> {
-        return parse()
+        return try {
+            parse()
+        }
+        catch (e : Exception) {
+            ArrayList()
+        }
     }
 
     override fun onPostExecute(result: List<MinimalArticle>) {
@@ -38,7 +44,7 @@ class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void,
         var description = ""
         lateinit var url : URL
         lateinit var date : Date
-        lateinit var imageUrl : URL
+        var imageUrl : URL? = null
         var amountCommentsString = -1
 
         while (event != XmlPullParser.END_DOCUMENT) {
@@ -89,8 +95,9 @@ class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void,
         return "(\\(<a href)+(.)*( />)+".toRegex().replace(readText(parser), "")
     }
 
-    private fun readImageUrl(parser: XmlPullParser) : URL {
-        val urlString = "(https://)(.)*(jpg)".toRegex().find(readText(parser))!!.value
+    private fun readImageUrl(parser: XmlPullParser) : URL? {
+        val urlString = "(https://)(.)*(jpg)".toRegex().find(readText(parser))?.value
+            ?: return null
 
         return URL(urlString)
     }

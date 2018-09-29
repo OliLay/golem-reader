@@ -40,6 +40,10 @@ class ParseManager(activity: OverviewActivity) {
             ArticleParser(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         }
 
+        if (minimalArticles.isEmpty()) {
+            onEveryArticleParsed()
+        }
+
         expectedArticleAmount = minimalArticles.size
     }
 
