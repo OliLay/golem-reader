@@ -8,9 +8,7 @@ import java.lang.ref.WeakReference
 import java.lang.Exception
 
 //TODO: feat: only load first X articles, load others when needed
-//TODO: bug: parsing amount of comments sometimes fails
 //TODO: feat: support 2 page articles
-//TODO: feat: support slide shows (means not showing them :D )
 
 class ParseManager(activity: OverviewActivity) {
     var parsing : Boolean = false

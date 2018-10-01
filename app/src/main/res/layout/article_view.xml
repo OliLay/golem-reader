@@ -86,6 +86,7 @@
             android:layout_toEndOf="@+id/article_photo"
             android:layout_alignParentTop="true"
             android:textSize="15sp"
+            android:textStyle="bold"
             />
 
         <!-- ARTICLE DESCRIPTION -->
