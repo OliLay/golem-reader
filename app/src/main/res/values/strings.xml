@@ -2,4 +2,6 @@
     <string name="app_name">Golem Reader</string>
     <string name="refresh">Aktualisieren</string>
     <string name="image_description">Vorschau</string>
+    <string name="no_connection">Keine Verbindung</string>
+    <string name="error">Fehler</string>
 </resources>

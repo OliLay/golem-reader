@@ -11,6 +11,7 @@ import android.view.View
 import olilay.com.golemreader.adapter.ArticleAdapter
 import olilay.com.golemreader.models.Article
 import olilay.com.golemreader.parser.ParseManager
+import java.lang.Exception
 
 
 class OverviewActivity : AppActivity() {
@@ -47,6 +48,8 @@ class OverviewActivity : AppActivity() {
         if (!parseManager.parsing) {
             setViewVisibility(true, R.id.overview_progress_bar)
             setViewVisibility(false, R.id.overview_recycler_view)
+            setViewVisibility(false,  R.id.overview_error_image)
+            setViewVisibility(false,  R.id.overview_error_message)
 
             parseManager.startParse()
         }
@@ -56,21 +59,20 @@ class OverviewActivity : AppActivity() {
         setViewVisibility(false, R.id.overview_progress_bar)
         setViewVisibility(true, R.id.overview_recycler_view)
 
-        if (articles.isEmpty()) {
-            System.out.println("No articles!")
-        } else {
-            recyclerView.adapter = ArticleAdapter(articles)
-        }
+        recyclerView.adapter = ArticleAdapter(articles)
     }
 
-    private fun setViewVisibility(visible: Boolean, viewId: Int) {
-        val view : View = findViewById(viewId)
+    fun onRefreshFailed(e: Exception) {
+        setViewVisibility(false, R.id.overview_progress_bar)
+        setViewVisibility(true, R.id.overview_error_image)
+        setViewVisibility(true, R.id.overview_error_message)
 
-        if (visible) {
-            view.visibility = View.VISIBLE
-        } else {
-            view.visibility = View.INVISIBLE
+        val message = when (e) {
+            is java.net.UnknownHostException -> resources.getString(R.string.no_connection)
+            else -> resources.getString(R.string.error)
         }
+
+        setTextViewText(message, R.id.overview_error_message)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

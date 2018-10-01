@@ -4,8 +4,8 @@ import android.os.AsyncTask
 import olilay.com.golemreader.activities.OverviewActivity
 import olilay.com.golemreader.models.Article
 import olilay.com.golemreader.models.MinimalArticle
-import org.jsoup.nodes.Element
 import java.lang.ref.WeakReference
+import java.lang.Exception
 
 //TODO: feat: only load first X articles, load others when needed
 //TODO: bug: parsing amount of comments sometimes fails
@@ -14,14 +14,12 @@ import java.lang.ref.WeakReference
 
 class ParseManager(activity: OverviewActivity) {
     var parsing : Boolean = false
-    private var activity : WeakReference<OverviewActivity>? = null
-    private var articles : ArrayList<Article>
+    private var activity : WeakReference<OverviewActivity> = WeakReference(activity)
+    private var articles : ArrayList<Article> = ArrayList()
 
     private var expectedArticleAmount : Int
 
     init {
-        this.activity = WeakReference(activity)
-        this.articles = ArrayList()
         this.expectedArticleAmount = -1
     }
 
@@ -31,20 +29,27 @@ class ParseManager(activity: OverviewActivity) {
             articles.clear()
 
             RssParser(this).execute()
-            //TickerParser(this).execute()
         }
     }
 
-    fun onTickerParsed(minimalArticles: List<MinimalArticle>) {
-        minimalArticles.forEach { minimalArticle ->
-            ArticleParser(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-        }
+    fun onTickerParsed(taskResult: AsyncTaskResult<List<MinimalArticle>>) {
+        val error = taskResult.error
 
-        if (minimalArticles.isEmpty()) {
-            onEveryArticleParsed()
-        }
+        if (error != null) {
+            onRefreshFailed(error)
+        } else {
+            val minimalArticles = taskResult.taskResult
 
-        expectedArticleAmount = minimalArticles.size
+            minimalArticles.forEach { minimalArticle ->
+                ArticleParser(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+            }
+
+            if (minimalArticles.isEmpty()) {
+                onEveryArticleParsed()
+            }
+
+            expectedArticleAmount = minimalArticles.size
+        }
     }
 
     fun onArticleParsed(article: Article) {
@@ -59,12 +64,16 @@ class ParseManager(activity: OverviewActivity) {
         parsing = false
         expectedArticleAmount = -1
         articles.sortByDescending { a -> a.date }
-        activity!!.get()!!.onRefreshFinished(articles)
+        getOverviewActivity().onRefreshFinished(articles)
+    }
+
+    private fun onRefreshFailed(e: Exception) {
+        parsing = false
+        expectedArticleAmount = -1
+        getOverviewActivity().onRefreshFailed(e)
     }
 
     fun getOverviewActivity() : OverviewActivity {
-        // Can not be null (passed with constructor),
-        // so allow for NPEs
-        return activity!!.get()!!
+        return activity.get()!!
     }
 }

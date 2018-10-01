@@ -1,6 +1,7 @@
 package olilay.com.golemreader.parser
 
 import android.os.AsyncTask
+import android.util.Log
 import olilay.com.golemreader.models.MinimalArticle
 import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
@@ -9,20 +10,21 @@ import java.text.SimpleDateFormat
 import java.util.*
 import org.xmlpull.v1.XmlPullParserFactory
 import java.lang.Exception
+import kotlin.collections.ArrayList
 
 const val GOLEM_RSS_URL = "https://rss.golem.de/rss.php?feed=RSS2.0"
 
-class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void, List<MinimalArticle>>() {
-    override fun doInBackground(vararg void : Void) : List<MinimalArticle> {
+class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<List<MinimalArticle>>>() {
+    override fun doInBackground(vararg void : Void) : AsyncTaskResult<List<MinimalArticle>> {
         return try {
-            parse()
-        }
-        catch (e : Exception) {
-            ArrayList()
+            AsyncTaskResult(parse())
+        } catch (e : Exception) {
+            Log.e("RssParser", e.toString())
+            AsyncTaskResult(ArrayList(), e)
         }
     }
 
-    override fun onPostExecute(result: List<MinimalArticle>) {
+    override fun onPostExecute(result: AsyncTaskResult<List<MinimalArticle>>) {
         super.onPostExecute(result)
 
         parseManager.onTickerParsed(result)
