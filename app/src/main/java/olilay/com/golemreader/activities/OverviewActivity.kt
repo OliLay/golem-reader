@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView
 import olilay.com.golemreader.R
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import olilay.com.golemreader.adapter.ArticleAdapter
 import olilay.com.golemreader.models.Article
 import olilay.com.golemreader.parser.ParseManager

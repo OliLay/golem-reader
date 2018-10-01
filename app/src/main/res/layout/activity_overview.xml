@@ -34,8 +34,7 @@
             android:layout_height="wrap_content"
             android:visibility="invisible"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/overview_error_image"
-            />
+            android:layout_below="@+id/overview_error_image" />
     </RelativeLayout>
 
     <LinearLayout
