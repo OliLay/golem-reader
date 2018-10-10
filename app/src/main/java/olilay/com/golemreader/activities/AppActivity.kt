@@ -29,9 +29,20 @@ abstract class AppActivity() : AppCompatActivity() {
         }
     }
 
-    protected fun setTextViewText(text: String, viewId: Int) {
+    private fun setTextViewText(text: String, viewId: Int) {
         val view : TextView = findViewById(viewId)
 
         view.text = text
+    }
+
+    protected fun showErrorMessage(message : String,
+                                   progressBarId : Int,
+                                   errorImageId : Int,
+                                   errorMessageId : Int) {
+        setViewVisibility(false, progressBarId)
+        setViewVisibility(true, errorImageId)
+        setViewVisibility(true, errorMessageId)
+
+        setTextViewText(message, errorMessageId)
     }
 }

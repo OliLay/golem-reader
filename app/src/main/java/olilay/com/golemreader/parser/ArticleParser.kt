@@ -1,48 +1,59 @@
 package olilay.com.golemreader.parser
 
-import android.app.Activity
-import android.graphics.drawable.Drawable
 import android.os.AsyncTask
+import android.util.Log
 import olilay.com.golemreader.models.Article
 import olilay.com.golemreader.models.MinimalArticle
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import java.net.URL
-import java.text.SimpleDateFormat
-import java.util.*
+import java.lang.Exception
 
+//TODO: feat: support 2+ page articles
+
+/**
+ * Handles downloading and parsing of an [Article].
+ */
 class ArticleParser(private val minimalArticle: MinimalArticle,
-                    private val parseManager : ParseManager) : AsyncTask<Void, Void, Article>() {
+                    private val articleParseManager: ArticleParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Article>>() {
 
     private var doc : Document? = null // Article HTML
 
-    override fun doInBackground(vararg void : Void) : Article {
-        return parse()
+    override fun doInBackground(vararg void : Void) : AsyncTaskResult<Article> {
+        return try {
+            AsyncTaskResult(parse(minimalArticle))
+        } catch (e : Exception) {
+            Log.e("RssParser", e.toString())
+            AsyncTaskResult(minimalArticle as Article, e)
+        }
     }
 
-    override fun onPostExecute(result: Article?) {
+    override fun onPostExecute(result: AsyncTaskResult<Article>) {
         super.onPostExecute(result)
 
-        parseManager.onArticleParsed(result!!)
+        articleParseManager.onContentParsed(result)
     }
 
-    private fun parse() : Article {
-        return Article(
-                minimalArticle.heading,
-                minimalArticle.url,
-                minimalArticle.description,
-                getImage(),
-                minimalArticle.date,
-                minimalArticle.amountOfComments,
-                getContent())
+    /**
+     * Parses the given [MinimalArticle] into an [Article].
+     *
+     * @param minimalArticle The [MinimalArticle] to be parsed.
+     * @return The [Article] with the [Article.content] field populated.
+     */
+    private fun parse(minimalArticle: MinimalArticle) : Article {
+            return Article(
+                    minimalArticle.heading,
+                    minimalArticle.url,
+                    minimalArticle.description,
+                    minimalArticle.date,
+                    minimalArticle.amountOfComments,
+                    minimalArticle.imageUrl!!,
+                    getContent(minimalArticle))
     }
 
-    private fun getImage() : Drawable {
-        return ParserUtils.urlToDrawable(minimalArticle.imageUrl.toString(),
-                parseManager.getOverviewActivity() as Activity)
-    }
-
-    private fun getContent() : String {
+    /**
+     * Downloads the content of the given [MinimalArticle] and parses it.
+     * @return A [String] that contains the content of the given article.
+     */
+    private fun getContent(minimalArticle: MinimalArticle) : String {
         if (doc == null) {
             doc = getArticleDocument(minimalArticle.url.toString())
         }

@@ -1,19 +1,16 @@
 package olilay.com.golemreader.parser
 
+import android.graphics.Bitmap
 import android.os.AsyncTask
 import olilay.com.golemreader.activities.OverviewActivity
-import olilay.com.golemreader.models.Article
 import olilay.com.golemreader.models.MinimalArticle
 import java.lang.ref.WeakReference
 import java.lang.Exception
 
-//TODO: feat: only load first X articles, load others when needed
-//TODO: feat: support 2 page articles
-
 class ParseManager(activity: OverviewActivity) {
     var parsing : Boolean = false
     private var activity : WeakReference<OverviewActivity> = WeakReference(activity)
-    private var articles : ArrayList<Article> = ArrayList()
+    private var minimalArticles : ArrayList<MinimalArticle> = ArrayList()
 
     private var expectedArticleAmount : Int
 
@@ -24,7 +21,7 @@ class ParseManager(activity: OverviewActivity) {
     fun startParse() {
         if (!parsing) {
             parsing = true
-            articles.clear()
+            minimalArticles.clear()
 
             RssParser(this).execute()
         }
@@ -39,30 +36,31 @@ class ParseManager(activity: OverviewActivity) {
             val minimalArticles = taskResult.taskResult
 
             minimalArticles.forEach { minimalArticle ->
-                ArticleParser(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+                ImageFetcher(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             }
 
             if (minimalArticles.isEmpty()) {
-                onEveryArticleParsed()
+                onEveryImageDownloaded()
             }
 
             expectedArticleAmount = minimalArticles.size
         }
     }
 
-    fun onArticleParsed(article: Article) {
-        articles.add(article)
+    fun onImageDownloaded(minimalArticle: MinimalArticle, bitmap: Bitmap) {
+        minimalArticle.setArticleThumbnail(bitmap)
+        minimalArticles.add(minimalArticle)
 
-        if (articles.size >= expectedArticleAmount) {
-            onEveryArticleParsed()
+        if (minimalArticles.size >= expectedArticleAmount) {
+            onEveryImageDownloaded()
         }
     }
 
-    private fun onEveryArticleParsed() {
+    private fun onEveryImageDownloaded() {
         parsing = false
         expectedArticleAmount = -1
-        articles.sortByDescending { a -> a.date }
-        getOverviewActivity().onRefreshFinished(articles)
+        minimalArticles.sortByDescending { a -> a.date }
+        getOverviewActivity().onRefreshFinished(minimalArticles)
     }
 
     private fun onRefreshFailed(e: Exception) {

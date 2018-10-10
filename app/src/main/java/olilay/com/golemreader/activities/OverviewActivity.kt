@@ -8,7 +8,7 @@ import olilay.com.golemreader.R
 import android.view.Menu
 import android.view.MenuItem
 import olilay.com.golemreader.adapter.ArticleAdapter
-import olilay.com.golemreader.models.Article
+import olilay.com.golemreader.models.MinimalArticle
 import olilay.com.golemreader.parser.ParseManager
 import java.lang.Exception
 
@@ -54,24 +54,21 @@ class OverviewActivity : AppActivity() {
         }
     }
 
-    fun onRefreshFinished(articles : List<Article>) {
+    fun onRefreshFinished(minimalArticles : List<MinimalArticle>) {
         setViewVisibility(false, R.id.overview_progress_bar)
         setViewVisibility(true, R.id.overview_recycler_view)
 
-        recyclerView.adapter = ArticleAdapter(articles)
+        recyclerView.adapter = ArticleAdapter(minimalArticles)
     }
 
     fun onRefreshFailed(e: Exception) {
-        setViewVisibility(false, R.id.overview_progress_bar)
-        setViewVisibility(true, R.id.overview_error_image)
-        setViewVisibility(true, R.id.overview_error_message)
-
         val message = when (e) {
             is java.net.UnknownHostException -> resources.getString(R.string.no_connection)
             else -> resources.getString(R.string.error)
         }
 
-        setTextViewText(message, R.id.overview_error_message)
+        showErrorMessage(message, R.id.overview_progress_bar, R.id.overview_error_image,
+                R.id.overview_error_message)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
