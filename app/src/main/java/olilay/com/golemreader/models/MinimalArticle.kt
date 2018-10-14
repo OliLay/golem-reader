@@ -2,6 +2,7 @@ package olilay.com.golemreader.models
 
 import android.graphics.Bitmap
 import android.os.Parcelable
+import android.text.format.DateUtils
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.net.URL
@@ -22,8 +23,8 @@ open class MinimalArticle (var heading : String,
 
 
     fun getDateString() : String {
-        val df = SimpleDateFormat("E, d.M", Locale.GERMANY)
-        return df.format(date)
+        return DateUtils.getRelativeTimeSpanString(date.time, Date().time, DateUtils.DAY_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_WEEKDAY).toString()
     }
 
     fun getTimeString() : String {

@@ -31,7 +31,7 @@ class ArticleAdapter(private val dataset: List<MinimalArticle>) :
         holder.cardView.article_description.text = item.description
         holder.cardView.article_photo.setImageBitmap(item.thumbnail)
         holder.cardView.article_text_comment.text = item.amountOfComments.toString()
-        holder.cardView.article_date.text = item.getDateString()
+        holder.cardView.article_date.text = "${item.getDateString()},"
         holder.cardView.article_time.text = item.getTimeString()
 
         holder.cardView.setOnClickListener { v ->
