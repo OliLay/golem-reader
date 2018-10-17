@@ -5,17 +5,17 @@ import android.util.Log
 import olilay.com.golemreader.models.Article
 import olilay.com.golemreader.models.MinimalArticle
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import java.lang.Exception
+import java.net.URL
 
-//TODO: feat: support 2+ page articles
+const val GOLEM_URL = "https://golem.de"
 
 /**
  * Handles downloading and parsing of an [Article].
  */
 class ArticleParser(private val minimalArticle: MinimalArticle,
                     private val articleParseManager: ArticleParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Article>>() {
-
-    private var doc : Document? = null // Article HTML
 
     override fun doInBackground(vararg void : Void) : AsyncTaskResult<Article> {
         return try {
@@ -46,21 +46,64 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
                     minimalArticle.date,
                     minimalArticle.amountOfComments,
                     minimalArticle.imageUrl!!,
-                    getContent(minimalArticle))
+                    getContent(minimalArticle.url))
     }
 
     /**
-     * Downloads the content of the given [MinimalArticle] and parses it.
+     * Downloads the complete content of the given [URL] (Golem.de Article) and parses it.
      * @return A [String] that contains the content of the given article.
      */
-    private fun getContent(minimalArticle: MinimalArticle) : String {
-        if (doc == null) {
-            doc = getArticleDocument(minimalArticle.url.toString())
+    private fun getContent(url: URL) : String {
+        val firstPageDocument = getArticleDocument(url.toString())
+        val commentLinkHtml = getCommentLink(firstPageDocument.allElements)
+        var firstPageContent = removeNotNeededContent(firstPageDocument.allElements)
+        var content : String
+
+        if (checkForMultiplePages(firstPageDocument.allElements)) {
+            val pageSet : MutableSet<URL> = getMultiplePagesUrls(firstPageDocument.allElements)
+            // we can now remove the page selector from the first page as we got all our data
+            firstPageContent = removePageSelector(firstPageContent)
+            content = firstPageContent.html()
+
+            for (page in pageSet) {
+                content += getLaterPage(page)
+            }
+        } else {
+            content = firstPageContent.html()
         }
 
-        val commentLink = doc!!.select("p[class=link-comments]")?.html()
-        val content = doc!!.select("article")
-                ?: throw ParseException("Could not get content of ${minimalArticle.heading}")
+        return content + commentLinkHtml
+    }
+
+    /**
+     * Gets a page and parses it.
+     * @param url The [URL] of the page.
+     * @return HTML data of the given page.
+     */
+    private fun getLaterPage(url: URL) : String {
+        val doc = getArticleDocument(url.toString())
+
+        var content = removeNotNeededContent(doc.allElements)
+        content = removeLaterPagesHeading(content)
+        content = removePageSelector(content)
+        return content.html()
+    }
+
+    /**
+     * Gets the link to the forum from a given [Elements] of an article.
+     * @return Link in HTML. If it could not be parsed, empty [String].
+     */
+    private fun getCommentLink(elems: Elements) : String {
+        return elems.select("p[class=link-comments]")?.html() ?: ""
+    }
+
+    /**
+     * Removes unnecessary content from the page (videos, images, ...).
+     * @return [Elements] of the cleaned page
+     */
+    private fun removeNotNeededContent(elems: Elements) : Elements {
+        val content = elems.select("article")
+                ?: throw ParseException("Could not get content of $elems")
         content.select("figure[class=hero]")?.remove()
         content.select("img")?.remove()
         content.select("div[class=authors]")?.remove()
@@ -71,7 +114,58 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
         content.select("ul[class=social-tools]")?.remove()
         content.select("div[class=tags]")?.remove()
 
-        return content.html() + commentLink
+        return content
+    }
+
+    /**
+     * Removes the heading of later pages of the article.
+     * @return [Document] of the page without the heading.
+     */
+    private fun removeLaterPagesHeading(elems: Elements) : Elements {
+        elems.select("h1[class=head5]")?.remove()
+        return elems
+    }
+    /**
+     * Checks if the article contains multiple pages
+     * @return true if the article contains more than one page, else false
+     */
+    private fun checkForMultiplePages(elems: Elements) : Boolean {
+        val listPagesIndicator = elems.select("ol[class=list-pages]")
+
+        return listPagesIndicator.size > 0
+    }
+
+    /**
+     * Gets all [URL]s of the article's pages.
+     * @return Set of URLs to the pages (no duplicates)
+     */
+    private fun getMultiplePagesUrls(elems: Elements) : MutableSet<URL> {
+        val listPagesIndicator = elems.select("ol[class=list-pages]")
+        val aTags = listPagesIndicator.select("a")
+        val urlSet : MutableSet<URL> = mutableSetOf()
+
+        for (elem in aTags) {
+            val hrefAttr = elem.attr("href")
+
+            if (hrefAttr != null) {
+                try {
+                    urlSet.add(URL(GOLEM_URL + hrefAttr))
+                } catch (e : Exception) {
+                    Log.w("ArticleParser", "$elem is not a valid URL. Discarding!")
+                }
+            }
+        }
+
+        return urlSet
+    }
+
+    /**
+     * Removes the page selector from the page.
+     * @return [Elements] without the page selector.
+     */
+    private fun removePageSelector(elems: Elements) : Elements {
+        elems.select("ol[class=list-pages]")?.remove()
+        return elems
     }
 
     /**
