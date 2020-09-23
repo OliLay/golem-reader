@@ -20,7 +20,7 @@ abstract class AppActivity() : AppCompatActivity() {
     }
 
     protected fun setViewVisibility(visible: Boolean, viewId: Int) {
-        val view : View = findViewById(viewId)
+        val view: View = findViewById(viewId)
 
         if (visible) {
             view.visibility = View.VISIBLE
@@ -30,15 +30,15 @@ abstract class AppActivity() : AppCompatActivity() {
     }
 
     private fun setTextViewText(text: String, viewId: Int) {
-        val view : TextView = findViewById(viewId)
+        val view: TextView = findViewById(viewId)
 
         view.text = text
     }
 
-    protected fun showErrorMessage(message : String,
-                                   progressBarId : Int,
-                                   errorImageId : Int,
-                                   errorMessageId : Int) {
+    protected fun showErrorMessage(message: String,
+                                   progressBarId: Int,
+                                   errorImageId: Int,
+                                   errorMessageId: Int) {
         setViewVisibility(false, progressBarId)
         setViewVisibility(true, errorImageId)
         setViewVisibility(true, errorMessageId)
