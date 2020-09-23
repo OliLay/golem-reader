@@ -1,4 +1,4 @@
-package olilay.com.golemreader.parser
+package com.olilay.golemreader.parser
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

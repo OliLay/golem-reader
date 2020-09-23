@@ -1,4 +1,4 @@
-package olilay.com.golemreader.activities
+package com.olilay.golemreader.activities
 
 import android.os.Bundle
 import android.view.View

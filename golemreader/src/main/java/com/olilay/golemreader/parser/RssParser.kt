@@ -1,8 +1,8 @@
-package olilay.com.golemreader.parser
+package com.olilay.golemreader.parser
 
 import android.os.AsyncTask
 import android.util.Log
-import olilay.com.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.MinimalArticle
 import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
 import java.net.URL

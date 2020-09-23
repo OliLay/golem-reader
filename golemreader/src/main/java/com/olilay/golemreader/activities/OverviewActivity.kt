@@ -1,4 +1,4 @@
-package olilay.com.golemreader.activities
+package com.olilay.golemreader.activities
 
 import android.os.Bundle
 import olilay.com.golemreader.R
@@ -7,9 +7,9 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import olilay.com.golemreader.adapter.ArticleAdapter
-import olilay.com.golemreader.models.MinimalArticle
-import olilay.com.golemreader.parser.ParseManager
+import com.olilay.golemreader.adapter.ArticleAdapter
+import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.parser.ParseManager
 import java.lang.Exception
 
 

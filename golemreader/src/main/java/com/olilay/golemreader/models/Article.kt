@@ -1,4 +1,4 @@
-package olilay.com.golemreader.models
+package com.olilay.golemreader.models
 
 import java.net.URL
 import java.util.*

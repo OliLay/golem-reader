@@ -1,9 +1,9 @@
-package olilay.com.golemreader.parser
+package com.olilay.golemreader.parser
 
 import android.os.AsyncTask
 import android.util.Log
-import olilay.com.golemreader.models.Article
-import olilay.com.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.Article
+import com.olilay.golemreader.models.MinimalArticle
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.lang.Exception

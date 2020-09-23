@@ -1,3 +1,3 @@
-package olilay.com.golemreader.parser
+package com.olilay.golemreader.parser
 
 class ParseException(override var message: String): Exception(message)

@@ -1,9 +1,9 @@
-package olilay.com.golemreader.parser
+package com.olilay.golemreader.parser
 
 import android.graphics.Bitmap
 import android.os.AsyncTask
-import olilay.com.golemreader.activities.OverviewActivity
-import olilay.com.golemreader.models.MinimalArticle
+import com.olilay.golemreader.activities.OverviewActivity
+import com.olilay.golemreader.models.MinimalArticle
 import java.lang.ref.WeakReference
 import java.lang.Exception
 

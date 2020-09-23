@@ -1,11 +1,11 @@
-package olilay.com.golemreader.parser
+package com.olilay.golemreader.parser
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.AsyncTask
 import android.util.Log
-import olilay.com.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.MinimalArticle
 import java.io.InputStream
 import java.lang.Exception
 import java.net.URL

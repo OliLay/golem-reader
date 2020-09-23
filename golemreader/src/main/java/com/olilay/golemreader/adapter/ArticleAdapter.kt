@@ -1,4 +1,4 @@
-package olilay.com.golemreader.adapter
+package com.olilay.golemreader.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,8 +7,8 @@ import olilay.com.golemreader.R
 import android.content.Intent
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import olilay.com.golemreader.activities.ArticleActivity
-import olilay.com.golemreader.models.MinimalArticle
+import com.olilay.golemreader.activities.ArticleActivity
+import com.olilay.golemreader.models.MinimalArticle
 
 
 class ArticleAdapter(private val dataset: List<MinimalArticle>) :

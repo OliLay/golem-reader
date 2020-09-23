@@ -1,8 +1,8 @@
-package olilay.com.golemreader.parser
+package com.olilay.golemreader.parser
 
-import olilay.com.golemreader.activities.ArticleActivity
-import olilay.com.golemreader.models.Article
-import olilay.com.golemreader.models.MinimalArticle
+import com.olilay.golemreader.activities.ArticleActivity
+import com.olilay.golemreader.models.Article
+import com.olilay.golemreader.models.MinimalArticle
 import java.lang.ref.WeakReference
 
 /**
