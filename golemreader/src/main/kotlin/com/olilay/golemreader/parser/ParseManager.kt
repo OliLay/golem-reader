@@ -8,11 +8,11 @@ import java.lang.ref.WeakReference
 import java.lang.Exception
 
 class ParseManager(activity: OverviewActivity) {
-    var parsing : Boolean = false
-    private var activity : WeakReference<OverviewActivity> = WeakReference(activity)
-    private var minimalArticles : ArrayList<MinimalArticle> = ArrayList()
+    var parsing: Boolean = false
+    private var activity: WeakReference<OverviewActivity> = WeakReference(activity)
+    private var minimalArticles: ArrayList<MinimalArticle> = ArrayList()
 
-    private var expectedArticleAmount : Int
+    private var expectedArticleAmount: Int
 
     init {
         this.expectedArticleAmount = -1
@@ -69,7 +69,7 @@ class ParseManager(activity: OverviewActivity) {
         getOverviewActivity().onRefreshFailed(e)
     }
 
-    fun getOverviewActivity() : OverviewActivity {
+    fun getOverviewActivity(): OverviewActivity {
         return activity.get()!!
     }
 }

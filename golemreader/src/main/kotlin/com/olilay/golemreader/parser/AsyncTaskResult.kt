@@ -9,7 +9,7 @@ class AsyncTaskResult<T>(val taskResult: T) {
         this.error = null
     }
 
-    constructor(result : T, error : Exception) : this(result) {
+    constructor(result: T, error: Exception) : this(result) {
         this.error = error
     }
 }

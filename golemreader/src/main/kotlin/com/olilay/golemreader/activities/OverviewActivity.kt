@@ -17,15 +17,15 @@ class OverviewActivity : AppActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var refreshLayout: SwipeRefreshLayout
-    private lateinit var parseManager : ParseManager
+    private lateinit var parseManager: ParseManager
 
-    override fun onCreate(savedInstanceState : Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_overview)
         super.onCreate(savedInstanceState)
 
         //SWIPE REFRESH LAYOUT
         refreshLayout = findViewById(R.id.overview_swiperefresh)
-        refreshLayout.setOnRefreshListener{ refresh() }
+        refreshLayout.setOnRefreshListener { refresh() }
 
         //CARD VIEW
         layoutManager = LinearLayoutManager(this)
@@ -47,14 +47,14 @@ class OverviewActivity : AppActivity() {
         if (!parseManager.parsing) {
             setViewVisibility(true, R.id.overview_progress_bar)
             setViewVisibility(false, R.id.overview_recycler_view)
-            setViewVisibility(false,  R.id.overview_error_image)
-            setViewVisibility(false,  R.id.overview_error_message)
+            setViewVisibility(false, R.id.overview_error_image)
+            setViewVisibility(false, R.id.overview_error_message)
 
             parseManager.startParse()
         }
     }
 
-    fun onRefreshFinished(minimalArticles : List<MinimalArticle>) {
+    fun onRefreshFinished(minimalArticles: List<MinimalArticle>) {
         setViewVisibility(false, R.id.overview_progress_bar)
         setViewVisibility(true, R.id.overview_recycler_view)
 
@@ -85,10 +85,6 @@ class OverviewActivity : AppActivity() {
     }
 
     private fun setRecyclerViewScrollListener() {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-        })
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {})
     }
 }

@@ -17,10 +17,10 @@ const val GOLEM_URL = "https://golem.de"
 class ArticleParser(private val minimalArticle: MinimalArticle,
                     private val articleParseManager: ArticleParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Article>>() {
 
-    override fun doInBackground(vararg void : Void) : AsyncTaskResult<Article> {
+    override fun doInBackground(vararg void: Void): AsyncTaskResult<Article> {
         return try {
             AsyncTaskResult(parse(minimalArticle))
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("RssParser", e.toString())
             AsyncTaskResult(minimalArticle as Article, e)
         }
@@ -38,29 +38,29 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
      * @param minimalArticle The [MinimalArticle] to be parsed.
      * @return The [Article] with the [Article.content] field populated.
      */
-    private fun parse(minimalArticle: MinimalArticle) : Article {
-            return Article(
-                    minimalArticle.heading,
-                    minimalArticle.url,
-                    minimalArticle.description,
-                    minimalArticle.date,
-                    minimalArticle.amountOfComments,
-                    minimalArticle.imageUrl!!,
-                    getContent(minimalArticle.url))
+    private fun parse(minimalArticle: MinimalArticle): Article {
+        return Article(
+                minimalArticle.heading,
+                minimalArticle.url,
+                minimalArticle.description,
+                minimalArticle.date,
+                minimalArticle.amountOfComments,
+                minimalArticle.imageUrl!!,
+                getContent(minimalArticle.url))
     }
 
     /**
      * Downloads the complete content of the given [URL] (Golem.de Article) and parses it.
      * @return A [String] that contains the content of the given article.
      */
-    private fun getContent(url: URL) : String {
+    private fun getContent(url: URL): String {
         val firstPageDocument = getArticleDocument(url.toString())
         val commentLinkHtml = getCommentLink(firstPageDocument.allElements)
         var firstPageContent = removeNotNeededContent(firstPageDocument.allElements)
-        var content : String
+        var content: String
 
         if (checkForMultiplePages(firstPageDocument.allElements)) {
-            val pageSet : MutableSet<URL> = getMultiplePagesUrls(firstPageDocument.allElements)
+            val pageSet: MutableSet<URL> = getMultiplePagesUrls(firstPageDocument.allElements)
             // we can now remove the page selector from the first page as we got all our data
             firstPageContent = removePageSelector(firstPageContent)
             content = firstPageContent.html()
@@ -80,7 +80,7 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
      * @param url The [URL] of the page.
      * @return HTML data of the given page.
      */
-    private fun getLaterPage(url: URL) : String {
+    private fun getLaterPage(url: URL): String {
         val doc = getArticleDocument(url.toString())
 
         var content = removeNotNeededContent(doc.allElements)
@@ -93,17 +93,17 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
      * Gets the link to the forum from a given [Elements] of an article.
      * @return Link in HTML. If it could not be parsed, empty [String].
      */
-    private fun getCommentLink(elems: Elements) : String {
-        return elems.select("p[class=link-comments]")?.html() ?: ""
+    private fun getCommentLink(elements: Elements): String {
+        return elements.select("p[class=link-comments]")?.html() ?: ""
     }
 
     /**
      * Removes unnecessary content from the page (videos, images, ...).
      * @return [Elements] of the cleaned page
      */
-    private fun removeNotNeededContent(elems: Elements) : Elements {
-        val content = elems.select("article")
-                ?: throw ParseException("Could not get content of $elems")
+    private fun removeNotNeededContent(elements: Elements): Elements {
+        val content = elements.select("article")
+                ?: throw ParseException("Could not get content of $elements")
         content.select("figure[class=hero]")?.remove()
         content.select("img")?.remove()
         content.select("div[class=authors]")?.remove()
@@ -121,16 +121,17 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
      * Removes the heading of later pages of the article.
      * @return [Document] of the page without the heading.
      */
-    private fun removeLaterPagesHeading(elems: Elements) : Elements {
-        elems.select("h1[class=head5]")?.remove()
-        return elems
+    private fun removeLaterPagesHeading(elements: Elements): Elements {
+        elements.select("h1[class=head5]")?.remove()
+        return elements
     }
+
     /**
      * Checks if the article contains multiple pages
      * @return true if the article contains more than one page, else false
      */
-    private fun checkForMultiplePages(elems: Elements) : Boolean {
-        val listPagesIndicator = elems.select("ol[class=list-pages]")
+    private fun checkForMultiplePages(elements: Elements): Boolean {
+        val listPagesIndicator = elements.select("ol[class=list-pages]")
 
         return listPagesIndicator.size > 0
     }
@@ -139,10 +140,10 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
      * Gets all [URL]s of the article's pages.
      * @return Set of URLs to the pages (no duplicates)
      */
-    private fun getMultiplePagesUrls(elems: Elements) : MutableSet<URL> {
-        val listPagesIndicator = elems.select("ol[class=list-pages]")
+    private fun getMultiplePagesUrls(elements: Elements): MutableSet<URL> {
+        val listPagesIndicator = elements.select("ol[class=list-pages]")
         val aTags = listPagesIndicator.select("a")
-        val urlSet : MutableSet<URL> = mutableSetOf()
+        val urlSet: MutableSet<URL> = mutableSetOf()
 
         for (elem in aTags) {
             val hrefAttr = elem.attr("href")
@@ -150,7 +151,7 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
             if (hrefAttr != null) {
                 try {
                     urlSet.add(URL(GOLEM_URL + hrefAttr))
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     Log.w("ArticleParser", "$elem is not a valid URL. Discarding!")
                 }
             }
@@ -163,16 +164,16 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
      * Removes the page selector from the page.
      * @return [Elements] without the page selector.
      */
-    private fun removePageSelector(elems: Elements) : Elements {
-        elems.select("ol[class=list-pages]")?.remove()
-        return elems
+    private fun removePageSelector(elements: Elements): Elements {
+        elements.select("ol[class=list-pages]")?.remove()
+        return elements
     }
 
     /**
      * Retrieves the article from a given Url.
      * @return The amount of comments.
      */
-    private fun getArticleDocument(url : String) : Document {
+    private fun getArticleDocument(url: String): Document {
         return ParserUtils.getDocument(url)
     }
 }

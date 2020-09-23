@@ -14,13 +14,13 @@ import java.net.URL
  * Gets the image of an url asynchronously.
  * @author Oliver Layer
  */
-class ImageFetcher (private val minimalArticle: MinimalArticle,
-                    private val parseManager : ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Bitmap>>() {
+class ImageFetcher(private val minimalArticle: MinimalArticle,
+                   private val parseManager: ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Bitmap>>() {
 
-    override fun doInBackground(vararg void : Void) : AsyncTaskResult<Bitmap> {
+    override fun doInBackground(vararg void: Void): AsyncTaskResult<Bitmap> {
         return try {
             AsyncTaskResult(downloadImage(minimalArticle.imageUrl))
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("ImageFetcher", e.toString())
             AsyncTaskResult(getDefaultBitmap(), e)
         }
@@ -37,7 +37,7 @@ class ImageFetcher (private val minimalArticle: MinimalArticle,
      * it can not resolve the image behind the URL, it returns a default [Bitmap].
      * @return [Bitmap] of requested image.
      */
-    private fun downloadImage(url : URL?) : Bitmap {
+    private fun downloadImage(url: URL?): Bitmap {
         url ?: return getDefaultBitmap()
 
         return try {
@@ -52,7 +52,7 @@ class ImageFetcher (private val minimalArticle: MinimalArticle,
      */
     private fun getDefaultBitmap(): Bitmap {
         //TODO: use proper default image
-        val bitmap =  Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.BLACK)
         return bitmap
     }

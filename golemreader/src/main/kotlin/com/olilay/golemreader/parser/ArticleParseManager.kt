@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference
  */
 class ArticleParseManager(private val minimalArticle: MinimalArticle,
                           articleActivity: ArticleActivity) {
-    private var articleActivity : WeakReference<ArticleActivity> = WeakReference(articleActivity)
+    private var articleActivity: WeakReference<ArticleActivity> = WeakReference(articleActivity)
     var parsing = false
 
     fun startParse() {
@@ -26,9 +26,9 @@ class ArticleParseManager(private val minimalArticle: MinimalArticle,
     }
 
     /**
-       Gets called when [ArticleParser] finished parsing the content of an [MinimalArticle].
+    Gets called when [ArticleParser] finished parsing the content of an [MinimalArticle].
      */
-    fun onContentParsed(articleTaskResult : AsyncTaskResult<Article>) {
+    fun onContentParsed(articleTaskResult: AsyncTaskResult<Article>) {
         parsing = false
 
         val error = articleTaskResult.error

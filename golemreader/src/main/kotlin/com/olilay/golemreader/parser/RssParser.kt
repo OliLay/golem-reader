@@ -14,11 +14,11 @@ import kotlin.collections.ArrayList
 
 const val GOLEM_RSS_URL = "https://rss.golem.de/rss.php?feed=RSS2.0"
 
-class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<List<MinimalArticle>>>() {
-    override fun doInBackground(vararg void : Void) : AsyncTaskResult<List<MinimalArticle>> {
+class RssParser(private val parseManager: ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<List<MinimalArticle>>>() {
+    override fun doInBackground(vararg void: Void): AsyncTaskResult<List<MinimalArticle>> {
         return try {
             AsyncTaskResult(parse())
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("RssParser", e.toString())
             AsyncTaskResult(ArrayList(), e)
         }
@@ -30,7 +30,7 @@ class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void,
         parseManager.onTickerParsed(result)
     }
 
-    private fun parse() : List<MinimalArticle> {
+    private fun parse(): List<MinimalArticle> {
         val data = getData()
         val factory = XmlPullParserFactory.newInstance()
         factory.isNamespaceAware = true
@@ -44,9 +44,9 @@ class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void,
 
         var title = ""
         var description = ""
-        lateinit var url : URL
-        lateinit var date : Date
-        var imageUrl : URL? = null
+        lateinit var url: URL
+        lateinit var date: Date
+        var imageUrl: URL? = null
         var amountCommentsString = -1
 
         while (event != XmlPullParser.END_DOCUMENT) {
@@ -88,27 +88,27 @@ class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void,
         return articles
     }
 
-    private fun getData() : String {
+    private fun getData(): String {
         val doc = ParserUtils.getDocument(GOLEM_RSS_URL)
         return doc.toString()
     }
 
-    private fun readDescription(parser: XmlPullParser) : String {
+    private fun readDescription(parser: XmlPullParser): String {
         return "(\\(<a href)+(.)*( />)+".toRegex().replace(readText(parser), "")
     }
 
-    private fun readImageUrl(parser: XmlPullParser) : URL? {
+    private fun readImageUrl(parser: XmlPullParser): URL? {
         val urlString = "(https://)(.)*(jpg)".toRegex().find(readText(parser))?.value
-            ?: return null
+                ?: return null
 
         return URL(urlString)
     }
 
-    private fun readUrl(parser: XmlPullParser) : URL {
+    private fun readUrl(parser: XmlPullParser): URL {
         return URL(readText(parser))
     }
 
-    private fun readAmountOfComments(parser: XmlPullParser) : Int {
+    private fun readAmountOfComments(parser: XmlPullParser): Int {
         val amountOfComments = readText(parser)
 
         return if (amountOfComments == "") {
@@ -118,7 +118,7 @@ class RssParser (private val parseManager: ParseManager) : AsyncTask<Void, Void,
         }
     }
 
-    private fun readDate(parser: XmlPullParser) : Date {
+    private fun readDate(parser: XmlPullParser): Date {
         //Sun, 23 Sep 2018 18:26:13 +0200
         return SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
                 .parse(readText(parser))
