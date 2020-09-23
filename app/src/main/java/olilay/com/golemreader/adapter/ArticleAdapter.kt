@@ -1,12 +1,12 @@
 package olilay.com.golemreader.adapter
 
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.article_view.view.*
 import olilay.com.golemreader.R
 import android.content.Intent
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
 import olilay.com.golemreader.activities.ArticleActivity
 import olilay.com.golemreader.models.MinimalArticle
 
@@ -17,7 +17,7 @@ class ArticleAdapter(private val dataset: List<MinimalArticle>) :
     class ViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardView)
 
     override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): ArticleAdapter.ViewHolder {
+                                    viewType: Int): ViewHolder {
         val cardView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.article_view, parent, false) as CardView
 

@@ -1,12 +1,12 @@
 package olilay.com.golemreader.activities
 
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import olilay.com.golemreader.R
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import olilay.com.golemreader.adapter.ArticleAdapter
 import olilay.com.golemreader.models.MinimalArticle
 import olilay.com.golemreader.parser.ParseManager
@@ -24,7 +24,7 @@ class OverviewActivity : AppActivity() {
         super.onCreate(savedInstanceState)
 
         //SWIPE REFRESH LAYOUT
-        refreshLayout = findViewById(R.id.overview_swiperefresh);
+        refreshLayout = findViewById(R.id.overview_swiperefresh)
         refreshLayout.setOnRefreshListener{ refresh() }
 
         //CARD VIEW
