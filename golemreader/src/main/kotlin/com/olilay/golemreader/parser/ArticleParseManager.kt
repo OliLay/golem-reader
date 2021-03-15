@@ -8,8 +8,6 @@ import java.lang.ref.WeakReference
 /**
  * Used for managing processes that belong to one particular article, e.g. getting details
  * of an article. (for now content using [ArticleParser], later on also comments)
- *
- * @author Oliver Layer
  */
 class ArticleParseManager(private val minimalArticle: MinimalArticle,
                           articleActivity: ArticleActivity) {

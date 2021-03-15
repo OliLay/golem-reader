@@ -12,7 +12,6 @@ import java.net.URL
 
 /**
  * Gets the image of an url asynchronously.
- * @author Oliver Layer
  */
 class ImageFetcher(private val minimalArticle: MinimalArticle,
                    private val parseManager: ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Bitmap>>() {

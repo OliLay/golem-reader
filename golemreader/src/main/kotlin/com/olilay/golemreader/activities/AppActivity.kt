@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import olilay.com.golemreader.R
+import com.olilay.golemreader.R
 
 /**
  * Use this activity class for every activity in the app as super class.

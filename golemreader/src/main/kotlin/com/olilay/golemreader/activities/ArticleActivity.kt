@@ -2,7 +2,7 @@ package com.olilay.golemreader.activities
 
 import android.os.Bundle
 import android.webkit.WebView
-import olilay.com.golemreader.R
+import com.olilay.golemreader.R
 import com.olilay.golemreader.models.MinimalArticle
 import com.olilay.golemreader.parser.ArticleParseManager
 import java.lang.Exception

@@ -10,12 +10,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Parcelize
-open class MinimalArticle(var heading: String,
-                          var url: URL,
-                          var description: String,
-                          var date: Date,
-                          var imageUrl: URL?,
-                          var amountOfComments: Int,
+open class MinimalArticle(open var heading: String,
+                          open var url: URL,
+                          open var description: String,
+                          open var date: Date,
+                          open var imageUrl: URL?,
+                          open var amountOfComments: Int,
                           var thumbnail: Bitmap? = null) : Parcelable {
 
     @IgnoredOnParcel

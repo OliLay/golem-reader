@@ -3,7 +3,7 @@ package com.olilay.golemreader.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.article_view.view.*
-import olilay.com.golemreader.R
+import com.olilay.golemreader.R
 import android.content.Intent
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView

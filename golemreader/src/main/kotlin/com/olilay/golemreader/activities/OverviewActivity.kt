@@ -1,7 +1,7 @@
 package com.olilay.golemreader.activities
 
 import android.os.Bundle
-import olilay.com.golemreader.R
+import com.olilay.golemreader.R
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
