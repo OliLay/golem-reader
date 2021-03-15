@@ -19,7 +19,6 @@ class ArticleParseManager(private val minimalArticle: MinimalArticle,
             parsing = true
 
             ArticleParser(minimalArticle, this).execute()
-
         }
     }
 

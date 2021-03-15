@@ -35,7 +35,8 @@ class ArticleActivity : AppActivity() {
     }
 
     fun onContentParsed(content: String) {
-        setWebView(content)
+        val styledContent = styleContent(content)
+        setWebView(styledContent)
         setViewVisibility(true, R.id.article_webview)
     }
 
@@ -54,6 +55,38 @@ class ArticleActivity : AppActivity() {
 
     private fun setWebView(content: String) {
         val webView: WebView = findViewById(R.id.article_webview)
-        webView.loadData(content, "text/html", null)
+        webView.loadDataWithBaseURL(null, content, "text/html; charset=utf-8",
+                "utf8", null)
+    }
+
+    private fun styleContent(content: String) : String {
+        return getStyleHtml() + content
+    }
+
+    private fun getStyleHtml(): String {
+        return """
+            <head>
+            <style>
+            body {
+              background-color: ${getBackgroundColorHex()};
+              color: ${getTextColorHex()};
+            }
+            </style>
+            </head>
+        """.trimIndent().format()
+    }
+
+    private fun getBackgroundColorHex() : String {
+        return getColorHex(R.color.colorBackground)
+    }
+
+    private fun getTextColorHex() : String {
+        return getColorHex(R.color.colorText)
+    }
+
+    private fun getColorHex(attribute: Int) : String {
+        val color = getColor(attribute)
+        return String.format("#%06X", (0xFFFFFF and color))
+
     }
 }
