@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorBackground">#343435</color>
-    <color name="colorText">#b6b6b6</color>
+    <color name="colorBackground">@color/primary_material_dark</color>
+    <color name="colorText">@color/colorAccent</color>
 </resources>
