@@ -71,6 +71,9 @@ class ArticleActivity : AppActivity() {
               background-color: ${getBackgroundColorHex()};
               color: ${getTextColorHex()};
             }
+            a:link {
+              color: white;
+            }
             </style>
             </head>
         """.trimIndent().format()
