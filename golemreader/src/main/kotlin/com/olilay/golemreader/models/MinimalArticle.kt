@@ -3,8 +3,8 @@ package com.olilay.golemreader.models
 import android.graphics.Bitmap
 import android.os.Parcelable
 import android.text.format.DateUtils
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*

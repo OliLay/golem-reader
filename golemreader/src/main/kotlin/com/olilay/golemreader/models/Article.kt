@@ -1,6 +1,6 @@
 package com.olilay.golemreader.models
 
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.net.URL
 import java.util.*
 
