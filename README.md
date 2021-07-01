@@ -1,8 +1,9 @@
 # golem-reader
-Android newsreader for reading articles from https://golem.de. 
+Material-style Android newsreader app for reading articles from https://golem.de.
+<center>
+<img src="images/articles.png" width="250" style="margin:0px 5%">
+<img src="images/article.png" width="250" style="margin:0px 5%">
+</center>
 
-Some stuff to do (not complete):
-- Replace deprecated calls (especially AsyncTask, use https://developer.android.com/topic/libraries/architecture/coroutines)
-- Refactor code (architecture)
-- Refurbish article view (maybe do not use the bare HTML we get for rendering, but that is not easy)
-- Native comment parsing
+## Build
+Use `Android Studio` to build and emulate the app.
