@@ -11,7 +11,7 @@ object ParserUtils {
     fun getDocument(url: String): Document {
         val con = Jsoup.connect(url)
         con.cookie("golem_view", "mobile") // ensure mobile view
-        con.cookie("golem_consent20", "cmp|210127") // accept tracking
+        con.cookie("golem_consent20", "cmp|210630") // accept tracking
         return con.get()
     }
 }
