@@ -56,7 +56,7 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
     private fun getContent(url: URL): String {
         val firstPageDocument = getArticleDocument(url.toString())
         val commentLinkHtml = getCommentLink(firstPageDocument.allElements)
-        var firstPageContent = removeNotNeededContent(firstPageDocument.allElements)
+        var firstPageContent = alterContent(firstPageDocument.allElements)
         var content: String
 
         if (checkForMultiplePages(firstPageDocument.allElements)) {
@@ -95,6 +95,27 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
      */
     private fun getCommentLink(elements: Elements): String {
         return elements.select("p[class=link-comments]")?.html() ?: ""
+    }
+
+    /**
+     * Adds an separator to the HTML, so that the ads are separated from the article content.
+     * @param elements All [Elements] of the article.
+     * @return [Elements] of the article.
+     */
+    private fun insertAdSeparators(elements: Elements): Elements {
+        val separatorHtml = "<hr>"
+        elements.select("section[class=supplementary]").before(separatorHtml).after(separatorHtml)
+        return elements
+    }
+
+    /**
+     * Alters the content of the article page. This mostly is related to removing content that
+     * is not supported (such as videos) or styling the article.
+     * @param elements All [Elements] of the article.
+     * @return [Elements] of the article.
+     */
+    private fun alterContent(elements: Elements) : Elements {
+        return insertAdSeparators(removeNotNeededContent(elements))
     }
 
     /**

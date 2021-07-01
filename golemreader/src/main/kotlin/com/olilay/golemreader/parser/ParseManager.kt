@@ -69,7 +69,7 @@ class ParseManager(activity: OverviewActivity) {
         getOverviewActivity().onRefreshFailed(e)
     }
 
-    fun getOverviewActivity(): OverviewActivity {
+    private fun getOverviewActivity(): OverviewActivity {
         return activity.get()!!
     }
 }
