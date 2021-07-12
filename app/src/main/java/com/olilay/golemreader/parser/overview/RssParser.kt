@@ -2,10 +2,7 @@ package com.olilay.golemreader.parser.overview
 
 import com.olilay.golemreader.models.MinimalArticle
 import com.olilay.golemreader.parser.helper.ParserUtils
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
 import java.net.URL
@@ -17,15 +14,15 @@ import kotlin.collections.ArrayList
 
 const val GOLEM_RSS_URL = "https://rss.golem.de/rss.php?feed=RSS2.0"
 
-class RssParser(private val parseManager: ParseManager) {
+class RssParser(private val tickerParseController: TickerParseController) {
     fun parseAsync() {
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val result : Result<List<MinimalArticle>> = try {
                 Result.success(parse())
             } catch (e: Exception) {
                 Result.failure(e)
             }
-            parseManager.onTickerParsed(result)
+            tickerParseController.onTickerParsed(result)
         }
     }
 
@@ -120,7 +117,7 @@ class RssParser(private val parseManager: ParseManager) {
     private fun readDate(parser: XmlPullParser): Date {
         //Sun, 23 Sep 2018 18:26:13 +0200
         return SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
-                .parse(readText(parser))
+                .parse(readText(parser))!!
     }
 
     private fun readText(parser: XmlPullParser): String {

@@ -14,7 +14,7 @@ open class MinimalArticle(open var heading: String,
                           open var url: URL,
                           open var description: String,
                           open var date: Date,
-                          open var imageUrl: URL?,
+                          open val imageUrl: URL?,
                           open var amountOfComments: Int,
                           var thumbnail: Bitmap? = null) : Parcelable {
 

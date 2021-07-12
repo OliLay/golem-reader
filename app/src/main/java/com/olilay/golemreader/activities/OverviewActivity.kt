@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.olilay.golemreader.adapter.ArticleAdapter
 import com.olilay.golemreader.models.MinimalArticle
-import com.olilay.golemreader.parser.overview.ParseManager
+import com.olilay.golemreader.parser.overview.TickerParseController
 import java.lang.Exception
 
 
@@ -17,7 +17,7 @@ class OverviewActivity : AppActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var refreshLayout: SwipeRefreshLayout
-    private lateinit var parseManager: ParseManager
+    private lateinit var tickerParseController: TickerParseController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_overview)
@@ -36,7 +36,7 @@ class OverviewActivity : AppActivity() {
         setRecyclerViewScrollListener()
 
         //PARSE MANAGER
-        parseManager = ParseManager(this)
+        tickerParseController = TickerParseController(this)
 
         refresh()
     }
@@ -44,13 +44,13 @@ class OverviewActivity : AppActivity() {
     private fun refresh() {
         refreshLayout.isRefreshing = false //make SwipeRefreshLayout loading animation disappear
 
-        if (!parseManager.parsing) {
+        if (!tickerParseController.parsing) {
             setViewVisibility(true, R.id.overview_progress_bar)
             setViewVisibility(false, R.id.overview_recycler_view)
             setViewVisibility(false, R.id.overview_error_image)
             setViewVisibility(false, R.id.overview_error_message)
 
-            parseManager.startParse()
+            tickerParseController.startParse()
         }
     }
 

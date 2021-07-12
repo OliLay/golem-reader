@@ -1,15 +1,17 @@
 package com.olilay.golemreader.parser.overview
 
 import android.graphics.Bitmap
-import android.os.AsyncTask
 import com.olilay.golemreader.activities.OverviewActivity
 import com.olilay.golemreader.models.MinimalArticle
-import com.olilay.golemreader.parser.helper.AsyncTaskResult
 import com.olilay.golemreader.parser.helper.ImageFetcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.lang.Exception
 
-class ParseManager(activity: OverviewActivity) {
+class TickerParseController(activity: OverviewActivity) {
     var parsing: Boolean = false
     private var activity: WeakReference<OverviewActivity> = WeakReference(activity)
     private var minimalArticles: ArrayList<MinimalArticle> = ArrayList()
@@ -36,7 +38,14 @@ class ParseManager(activity: OverviewActivity) {
             val minimalArticles = tickerResult.getOrNull()
 
             minimalArticles!!.forEach { minimalArticle ->
-                ImageFetcher(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+                if (minimalArticle.imageUrl == null) {
+                    onImageDownloaded(minimalArticle, ImageFetcher.getDefaultBitmap())
+                } else {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val image = ImageFetcher.forceGetAsync(minimalArticle.imageUrl!!)
+                        onImageDownloaded(minimalArticle, image.await())
+                    }
+                }
             }
 
             if (minimalArticles.isEmpty()) {
@@ -47,7 +56,7 @@ class ParseManager(activity: OverviewActivity) {
         }
     }
 
-    fun onImageDownloaded(minimalArticle: MinimalArticle, bitmap: Bitmap) {
+    private fun onImageDownloaded(minimalArticle: MinimalArticle, bitmap: Bitmap) {
         minimalArticle.setArticleThumbnail(bitmap)
         minimalArticles.add(minimalArticle)
 

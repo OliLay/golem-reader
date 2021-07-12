@@ -3,55 +3,34 @@ package com.olilay.golemreader.parser.helper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.os.AsyncTask
-import android.util.Log
-import com.olilay.golemreader.models.MinimalArticle
-import com.olilay.golemreader.parser.overview.ParseManager
+import kotlinx.coroutines.*
 import java.io.InputStream
 import java.lang.Exception
 import java.net.URL
 
 /**
- * Gets the image of an url asynchronously.
+ * Gets the image of an URL asynchronously.
  */
-class ImageFetcher(private val minimalArticle: MinimalArticle,
-                   private val parseManager: ParseManager
-) : AsyncTask<Void, Void, AsyncTaskResult<Bitmap>>() {
-
-    override fun doInBackground(vararg void: Void): AsyncTaskResult<Bitmap> {
-        return try {
-            AsyncTaskResult(downloadImage(minimalArticle.imageUrl))
-        } catch (e: Exception) {
-            Log.e("ImageFetcher", e.toString())
-            AsyncTaskResult(getDefaultBitmap(), e)
+object ImageFetcher {
+    fun forceGetAsync(url: URL) : Deferred<Bitmap> {
+        return CoroutineScope(Dispatchers.IO).async {
+            val result = downloadImage(url)
+            result.getOrDefault(getDefaultBitmap())
         }
     }
 
-    override fun onPostExecute(result: AsyncTaskResult<Bitmap>) {
-        super.onPostExecute(result)
-
-        parseManager.onImageDownloaded(minimalArticle, result.taskResult)
-    }
-
-    /**
-     * Expects an URL in form of a String an tries to get the image in form of a [Bitmap]. If
-     * it can not resolve the image behind the URL, it returns a default [Bitmap].
-     * @return [Bitmap] of requested image.
-     */
-    private fun downloadImage(url: URL?): Bitmap {
-        url ?: return getDefaultBitmap()
-
+    private fun downloadImage(url: URL): Result<Bitmap> {
         return try {
-            BitmapFactory.decodeStream(url.content as InputStream)
+            Result.success(BitmapFactory.decodeStream(url.content as InputStream))
         } catch (e: Exception) {
-            getDefaultBitmap()
+            Result.failure(e)
         }
     }
 
     /**
      * @return A meaningless default [Bitmap].
      */
-    private fun getDefaultBitmap(): Bitmap {
+    fun getDefaultBitmap(): Bitmap {
         //TODO: use proper default image
         val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.BLACK)
