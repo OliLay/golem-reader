@@ -1,4 +1,4 @@
-package com.olilay.golemreader.parser
+package com.olilay.golemreader.parser.helper
 
 import java.lang.Exception
 

@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.webkit.WebView
 import com.olilay.golemreader.R
 import com.olilay.golemreader.models.MinimalArticle
-import com.olilay.golemreader.parser.ArticleParseManager
+import com.olilay.golemreader.parser.article.ArticleParseController
 import java.lang.Exception
 import java.lang.RuntimeException
 
 class ArticleActivity : AppActivity() {
-    private lateinit var articleParseManager: ArticleParseManager
+    private lateinit var articleParseController: ArticleParseController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_article)
@@ -19,18 +19,18 @@ class ArticleActivity : AppActivity() {
         val minimalArticle = extras?.getParcelable("minimalArticle") as MinimalArticle?
                 ?: throw RuntimeException("MinimalArticle object not supplied by caller!")
 
-        articleParseManager = ArticleParseManager(minimalArticle, this)
+        articleParseController = ArticleParseController(minimalArticle, this)
         showArticle()
     }
 
     private fun showArticle() {
-        if (!articleParseManager.parsing) {
+        if (!articleParseController.parsing) {
             setViewVisibility(true, R.id.article_progress_bar)
             setViewVisibility(false, R.id.article_webview)
             setViewVisibility(false, R.id.article_error_image)
             setViewVisibility(false, R.id.article_error_message)
 
-            articleParseManager.startParse()
+            articleParseController.startParse()
         }
     }
 
@@ -41,7 +41,7 @@ class ArticleActivity : AppActivity() {
     }
 
     /**
-     * Gets called by [ArticleParseManager] when the retrieving of the article fails.
+     * Gets called by [ArticleParseController] when the retrieving of the article fails.
      */
     fun onParseFailed(e: Exception) {
         val message = when (e) {

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.olilay.golemreader.adapter.ArticleAdapter
 import com.olilay.golemreader.models.MinimalArticle
-import com.olilay.golemreader.parser.ParseManager
+import com.olilay.golemreader.parser.overview.ParseManager
 import java.lang.Exception
 
 

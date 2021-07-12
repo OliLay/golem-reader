@@ -1,4 +1,4 @@
-package com.olilay.golemreader.parser
+package com.olilay.golemreader.parser.helper
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.util.Log
 import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.parser.overview.ParseManager
 import java.io.InputStream
 import java.lang.Exception
 import java.net.URL
@@ -14,7 +15,8 @@ import java.net.URL
  * Gets the image of an url asynchronously.
  */
 class ImageFetcher(private val minimalArticle: MinimalArticle,
-                   private val parseManager: ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Bitmap>>() {
+                   private val parseManager: ParseManager
+) : AsyncTask<Void, Void, AsyncTaskResult<Bitmap>>() {
 
     override fun doInBackground(vararg void: Void): AsyncTaskResult<Bitmap> {
         return try {

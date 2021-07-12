@@ -1,1 +1,1 @@
-include ':golemreader'
+include ':app'

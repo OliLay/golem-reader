@@ -1,16 +1,17 @@
-package com.olilay.golemreader.parser
+package com.olilay.golemreader.parser.article
 
 import com.olilay.golemreader.activities.ArticleActivity
 import com.olilay.golemreader.models.Article
 import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.parser.helper.AsyncTaskResult
 import java.lang.ref.WeakReference
 
 /**
  * Used for managing processes that belong to one particular article, e.g. getting details
  * of an article. (for now content using [ArticleParser], later on also comments)
  */
-class ArticleParseManager(private val minimalArticle: MinimalArticle,
-                          articleActivity: ArticleActivity) {
+class ArticleParseController(private val minimalArticle: MinimalArticle,
+                             articleActivity: ArticleActivity) {
     private var articleActivity: WeakReference<ArticleActivity> = WeakReference(articleActivity)
     var parsing = false
 

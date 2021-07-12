@@ -1,9 +1,12 @@
-package com.olilay.golemreader.parser
+package com.olilay.golemreader.parser.article
 
 import android.os.AsyncTask
 import android.util.Log
 import com.olilay.golemreader.models.Article
 import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.parser.helper.AsyncTaskResult
+import com.olilay.golemreader.parser.exception.ParseException
+import com.olilay.golemreader.parser.helper.ParserUtils
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.lang.Exception
@@ -15,7 +18,8 @@ const val GOLEM_URL = "https://golem.de"
  * Handles downloading and parsing of an [Article].
  */
 class ArticleParser(private val minimalArticle: MinimalArticle,
-                    private val articleParseManager: ArticleParseManager) : AsyncTask<Void, Void, AsyncTaskResult<Article>>() {
+                    private val articleParseController: ArticleParseController
+) : AsyncTask<Void, Void, AsyncTaskResult<Article>>() {
 
     override fun doInBackground(vararg void: Void): AsyncTaskResult<Article> {
         return try {
@@ -29,7 +33,7 @@ class ArticleParser(private val minimalArticle: MinimalArticle,
     override fun onPostExecute(result: AsyncTaskResult<Article>) {
         super.onPostExecute(result)
 
-        articleParseManager.onContentParsed(result)
+        articleParseController.onContentParsed(result)
     }
 
     /**
