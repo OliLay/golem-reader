@@ -25,19 +25,17 @@ class ParseManager(activity: OverviewActivity) {
             parsing = true
             minimalArticles.clear()
 
-            RssParser(this).execute()
+            RssParser(this).parseAsync()
         }
     }
 
-    fun onTickerParsed(taskResult: AsyncTaskResult<List<MinimalArticle>>) {
-        val error = taskResult.error
-
-        if (error != null) {
-            onRefreshFailed(error)
+    fun onTickerParsed(tickerResult: Result<List<MinimalArticle>>) {
+        if (tickerResult.isFailure) {
+            onRefreshFailed(tickerResult.exceptionOrNull() as Exception)
         } else {
-            val minimalArticles = taskResult.taskResult
+            val minimalArticles = tickerResult.getOrNull()
 
-            minimalArticles.forEach { minimalArticle ->
+            minimalArticles!!.forEach { minimalArticle ->
                 ImageFetcher(minimalArticle, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             }
 

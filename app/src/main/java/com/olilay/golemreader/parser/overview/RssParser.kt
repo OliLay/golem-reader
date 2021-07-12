@@ -1,10 +1,11 @@
 package com.olilay.golemreader.parser.overview
 
-import android.os.AsyncTask
-import android.util.Log
 import com.olilay.golemreader.models.MinimalArticle
-import com.olilay.golemreader.parser.helper.AsyncTaskResult
 import com.olilay.golemreader.parser.helper.ParserUtils
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
 import java.net.URL
@@ -16,20 +17,16 @@ import kotlin.collections.ArrayList
 
 const val GOLEM_RSS_URL = "https://rss.golem.de/rss.php?feed=RSS2.0"
 
-class RssParser(private val parseManager: ParseManager) : AsyncTask<Void, Void, AsyncTaskResult<List<MinimalArticle>>>() {
-    override fun doInBackground(vararg void: Void): AsyncTaskResult<List<MinimalArticle>> {
-        return try {
-            AsyncTaskResult(parse())
-        } catch (e: Exception) {
-            Log.e("RssParser", e.toString())
-            AsyncTaskResult(ArrayList(), e)
+class RssParser(private val parseManager: ParseManager) {
+    fun parseAsync() {
+        GlobalScope.launch {
+            val result : Result<List<MinimalArticle>> = try {
+                Result.success(parse())
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+            parseManager.onTickerParsed(result)
         }
-    }
-
-    override fun onPostExecute(result: AsyncTaskResult<List<MinimalArticle>>) {
-        super.onPostExecute(result)
-
-        parseManager.onTickerParsed(result)
     }
 
     private fun parse(): List<MinimalArticle> {
