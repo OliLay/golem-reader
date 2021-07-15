@@ -1,8 +1,9 @@
 package com.olilay.golemreader.parser.article
 
 import android.util.Log
-import com.olilay.golemreader.models.Article
-import com.olilay.golemreader.models.ArticleMetadata
+import com.olilay.golemreader.models.article.Article
+import com.olilay.golemreader.models.article.ArticleMetadata
+import com.olilay.golemreader.models.article.Page
 import com.olilay.golemreader.parser.exception.ParseException
 import com.olilay.golemreader.parser.helper.ParserUtils
 import kotlinx.coroutines.*
@@ -42,7 +43,7 @@ class ArticleParser {
             articleMetadata.date,
             articleMetadata.amountOfComments,
             articleMetadata.imageUrl!!,
-            getContent(articleMetadata.url)
+            getJsoupDocument(articleMetadata.url)
         )
     }
 
@@ -50,26 +51,26 @@ class ArticleParser {
      * Downloads the complete content of the given [URL] (Golem.de Article) and parses it.
      * @return A [String] that contains the content of the given article.
      */
-    private fun getContent(url: URL): String {
-        val firstPageDocument = getArticleDocument(url.toString())
-        val commentLinkHtml = getCommentLink(firstPageDocument.allElements)
-        var firstPageContent = alterContent(firstPageDocument.allElements)
-        var content: String
+    private fun getJsoupDocument(url: URL): String {
+        val firstPage = Page(url, true, getJsoupDocument(url.toString()))
+        var overallContent: String
 
-        if (checkForMultiplePages(firstPageDocument.allElements)) {
-            val pageSet: MutableSet<URL> = getMultiplePagesUrls(firstPageDocument.allElements)
+        if (hasMultiplePages(firstPage)) {
+            val pages: MutableSet<URL> = getFurtherPagesUrls(firstPage)
+
+            // TODO: continue
             // we can now remove the page selector from the first page as we got all our data
             firstPageContent = removePageSelector(firstPageContent)
-            content = firstPageContent.html()
+            overallContent = firstPageContent.html()
 
-            for (page in pageSet) {
-                content += getLaterPage(page)
+            for (page in pageUrlSet) {
+                overallContent += getLaterPage(page)
             }
         } else {
-            content = firstPageContent.html()
+            overallContent = firstPageContent.html()
         }
 
-        return content + commentLinkHtml
+        return overallContent + getCommentLink(firstPageDocument.allElements)
     }
 
     /**
@@ -78,7 +79,7 @@ class ArticleParser {
      * @return HTML data of the given page.
      */
     private fun getLaterPage(url: URL): String {
-        val doc = getArticleDocument(url.toString())
+        val doc = getJsoupDocument(url.toString())
 
         var content = removeNotNeededContent(doc.allElements)
         content = removeLaterPagesHeading(content)
@@ -102,6 +103,12 @@ class ArticleParser {
     private fun insertAdSeparators(elements: Elements): Elements {
         val separatorHtml = "<hr>"
         elements.select("section[class=supplementary]").before(separatorHtml).after(separatorHtml)
+        elements.select("div[class=gbox_affiliate]").before(separatorHtml).after(separatorHtml)
+
+        val gbox = elements.select("a[class=gbox_btn]")
+        val attr = gbox.attr("data-cta")
+        elements.select("a[class=gbox_btn]").html(attr)
+
         return elements
     }
 
@@ -149,8 +156,8 @@ class ArticleParser {
      * Checks if the article contains multiple pages
      * @return true if the article contains more than one page, else false
      */
-    private fun checkForMultiplePages(elements: Elements): Boolean {
-        val listPagesIndicator = elements.select("ol[class=list-pages]")
+    private fun hasMultiplePages(firstPage: Page): Boolean {
+        val listPagesIndicator = firstPage.jsoupDocuments.select("ol[class=list-pages]")
 
         return listPagesIndicator.size > 0
     }
@@ -159,24 +166,25 @@ class ArticleParser {
      * Gets all [URL]s of the article's pages.
      * @return Set of URLs to the pages (no duplicates)
      */
-    private fun getMultiplePagesUrls(elements: Elements): MutableSet<URL> {
-        val listPagesIndicator = elements.select("ol[class=list-pages]")
+    private fun getFurtherPagesUrls(firstPage: Page): Set<Page> {
+        val listPagesIndicator = firstPage.jsoupDocuments.select("ol[class=list-pages]")
         val aTags = listPagesIndicator.select("a")
-        val urlSet: MutableSet<URL> = mutableSetOf()
+        val pages: Set<Page> = mutableSetOf()
 
         for (elem in aTags) {
             val hrefAttr = elem.attr("href")
 
             if (hrefAttr != null) {
                 try {
-                    urlSet.add(URL(GOLEM_URL + hrefAttr))
+                    val pageUrl = URL(GOLEM_URL + hrefAttr)
+                    pages.add(Page(pageUrl, false)))
                 } catch (e: Exception) {
                     Log.w("ArticleParser", "$elem is not a valid URL. Discarding!")
                 }
             }
         }
 
-        return urlSet
+        return pages
     }
 
     /**
@@ -186,13 +194,5 @@ class ArticleParser {
     private fun removePageSelector(elements: Elements): Elements {
         elements.select("ol[class=list-pages]")?.remove()
         return elements
-    }
-
-    /**
-     * Retrieves the article from a given Url.
-     * @return The amount of comments.
-     */
-    private fun getArticleDocument(url: String): Document {
-        return ParserUtils.getDocument(url)
     }
 }

@@ -1,6 +1,6 @@
 package com.olilay.golemreader.parser.overview
 
-import com.olilay.golemreader.models.ArticleMetadata
+import com.olilay.golemreader.models.article.ArticleMetadata
 import com.olilay.golemreader.parser.helper.ParserUtils
 import kotlinx.coroutines.*
 import org.xmlpull.v1.XmlPullParser

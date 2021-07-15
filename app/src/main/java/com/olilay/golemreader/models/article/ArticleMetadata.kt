@@ -1,4 +1,4 @@
-package com.olilay.golemreader.models
+package com.olilay.golemreader.models.article
 
 import android.graphics.Bitmap
 import android.os.Parcelable
@@ -23,8 +23,12 @@ open class ArticleMetadata(
     @IgnoredOnParcel
     private var isThumbnailDownloaded = false
 
-
     fun getDateString(): String {
+        /*
+        as golem.de offers only articles in German language, we also display the
+        date info using the German locale
+         */
+        Locale.setDefault(Locale.GERMANY)
         return DateUtils.getRelativeTimeSpanString(
             date.time, Date().time, DateUtils.DAY_IN_MILLIS,
             DateUtils.FORMAT_ABBREV_WEEKDAY
@@ -32,8 +36,7 @@ open class ArticleMetadata(
     }
 
     fun getTimeString(): String {
-        val df = SimpleDateFormat("HH:mm", Locale.GERMANY)
-        return df.format(date) + " Uhr"
+        return SimpleDateFormat("HH:mm", Locale.GERMAN).format(date) + " Uhr"
     }
 
     fun setArticleThumbnail(bitmap: Bitmap) {

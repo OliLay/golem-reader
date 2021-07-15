@@ -2,7 +2,7 @@ package com.olilay.golemreader.parser.overview
 
 import android.graphics.Bitmap
 import com.olilay.golemreader.activities.OverviewActivity
-import com.olilay.golemreader.models.ArticleMetadata
+import com.olilay.golemreader.models.article.ArticleMetadata
 import com.olilay.golemreader.parser.helper.ImageFetcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -7,3 +7,6 @@ Material-style Android newsreader app for reading articles from https://golem.de
   
 ## Build
 Use `Android Studio` to build and emulate the app.
+
+## Note
+This app does **not** remove any ads from the Golem articles. 

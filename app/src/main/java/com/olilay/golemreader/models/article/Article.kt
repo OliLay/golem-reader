@@ -1,4 +1,4 @@
-package com.olilay.golemreader.models
+package com.olilay.golemreader.models.article
 
 import kotlinx.parcelize.Parcelize
 import java.net.URL
@@ -13,5 +13,4 @@ class Article(
     override var amountOfComments: Int,
     override var imageUrl: URL?,
     var content: String
-) : ArticleMetadata(heading, url, description, date, imageUrl, amountOfComments) {
-}
+) : ArticleMetadata(heading, url, description, date, imageUrl, amountOfComments)

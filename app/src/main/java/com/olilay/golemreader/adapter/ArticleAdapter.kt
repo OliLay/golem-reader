@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import com.olilay.golemreader.activities.ArticleActivity
 import com.olilay.golemreader.databinding.ArticleViewBinding
-import com.olilay.golemreader.models.ArticleMetadata
+import com.olilay.golemreader.models.article.ArticleMetadata
 
 
 class ArticleAdapter(private val dataset: List<ArticleMetadata>) :

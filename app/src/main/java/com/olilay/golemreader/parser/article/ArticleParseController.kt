@@ -1,8 +1,8 @@
 package com.olilay.golemreader.parser.article
 
 import com.olilay.golemreader.activities.ArticleActivity
-import com.olilay.golemreader.models.Article
-import com.olilay.golemreader.models.ArticleMetadata
+import com.olilay.golemreader.models.article.Article
+import com.olilay.golemreader.models.article.ArticleMetadata
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,9 +1,11 @@
 package com.olilay.golemreader.activities
 
 import android.os.Bundle
+import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.olilay.golemreader.R
-import com.olilay.golemreader.models.ArticleMetadata
+import com.olilay.golemreader.models.article.ArticleMetadata
 import com.olilay.golemreader.parser.article.ArticleParseController
 import java.lang.Exception
 import java.lang.RuntimeException
@@ -36,7 +38,7 @@ class ArticleActivity : AppActivity() {
 
     fun onContentParsed(content: String) {
         val styledContent = styleContent(content)
-        setWebView(styledContent)
+        setWebViewContent(styledContent)
         setViewVisibility(true, R.id.article_webview)
     }
 
@@ -55,7 +57,7 @@ class ArticleActivity : AppActivity() {
         )
     }
 
-    private fun setWebView(content: String) {
+    private fun setWebViewContent(content: String) {
         val webView: WebView = findViewById(R.id.article_webview)
         webView.loadDataWithBaseURL(
             null, content, "text/html; charset=utf-8",

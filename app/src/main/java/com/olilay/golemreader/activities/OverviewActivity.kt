@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.olilay.golemreader.adapter.ArticleAdapter
-import com.olilay.golemreader.models.ArticleMetadata
+import com.olilay.golemreader.models.article.ArticleMetadata
 import com.olilay.golemreader.parser.overview.TickerParseController
 import java.lang.Exception
 
