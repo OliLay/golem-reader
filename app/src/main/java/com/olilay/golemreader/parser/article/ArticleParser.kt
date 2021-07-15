@@ -131,6 +131,7 @@ class ArticleParser {
         content.select("p")?.first()?.remove()
         content.select("ul[class=social-tools]")?.remove()
         content.select("div[class=tags]")?.remove()
+        content.select("div[class=topictags]")?.remove()
 
         return content
     }
