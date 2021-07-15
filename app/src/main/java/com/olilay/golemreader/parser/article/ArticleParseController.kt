@@ -2,7 +2,7 @@ package com.olilay.golemreader.parser.article
 
 import com.olilay.golemreader.activities.ArticleActivity
 import com.olilay.golemreader.models.Article
-import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.ArticleMetadata
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,8 +13,10 @@ import java.lang.ref.WeakReference
  * Used for managing processes that belong to one particular article, e.g. getting details
  * of an article. (for now content using [ArticleParser], later on also comments)
  */
-class ArticleParseController(private val minimalArticle: MinimalArticle,
-                             articleActivity: ArticleActivity) {
+class ArticleParseController(
+    private val articleMetadata: ArticleMetadata,
+    articleActivity: ArticleActivity
+) {
     private var articleActivity: WeakReference<ArticleActivity> = WeakReference(articleActivity)
     private var articleParser: ArticleParser = ArticleParser()
     var parsing = false
@@ -24,14 +26,14 @@ class ArticleParseController(private val minimalArticle: MinimalArticle,
             parsing = true
 
             CoroutineScope(Dispatchers.Main).launch {
-               val article = articleParser.parseAsync(minimalArticle)
-               onContentParsed(article)
+                val article = articleParser.parseAsync(articleMetadata)
+                onContentParsed(article)
             }
         }
     }
 
     /**
-    Gets called when [ArticleParser] finished parsing the content of an [MinimalArticle].
+    Gets called when [ArticleParser] finished parsing the content of an [ArticleMetadata].
      */
     private fun onContentParsed(articleTaskResult: Result<Article>) {
         parsing = false

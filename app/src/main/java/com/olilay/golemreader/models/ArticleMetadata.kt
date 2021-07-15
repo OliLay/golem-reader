@@ -10,21 +10,25 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Parcelize
-open class MinimalArticle(open var heading: String,
-                          open var url: URL,
-                          open var description: String,
-                          open var date: Date,
-                          open val imageUrl: URL?,
-                          open var amountOfComments: Int,
-                          var thumbnail: Bitmap? = null) : Parcelable {
+open class ArticleMetadata(
+    open var heading: String,
+    open var url: URL,
+    open var description: String,
+    open var date: Date,
+    open val imageUrl: URL?,
+    open var amountOfComments: Int,
+    var thumbnail: Bitmap? = null
+) : Parcelable {
 
     @IgnoredOnParcel
     private var isThumbnailDownloaded = false
 
 
     fun getDateString(): String {
-        return DateUtils.getRelativeTimeSpanString(date.time, Date().time, DateUtils.DAY_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_WEEKDAY).toString()
+        return DateUtils.getRelativeTimeSpanString(
+            date.time, Date().time, DateUtils.DAY_IN_MILLIS,
+            DateUtils.FORMAT_ABBREV_WEEKDAY
+        ).toString()
     }
 
     fun getTimeString(): String {

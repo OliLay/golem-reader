@@ -35,10 +35,12 @@ abstract class AppActivity() : AppCompatActivity() {
         view.text = text
     }
 
-    protected fun showErrorMessage(message: String,
-                                   progressBarId: Int,
-                                   errorImageId: Int,
-                                   errorMessageId: Int) {
+    protected fun showErrorMessage(
+        message: String,
+        progressBarId: Int,
+        errorImageId: Int,
+        errorMessageId: Int
+    ) {
         setViewVisibility(false, progressBarId)
         setViewVisibility(true, errorImageId)
         setViewVisibility(true, errorMessageId)

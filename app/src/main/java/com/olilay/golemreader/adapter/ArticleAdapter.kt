@@ -6,10 +6,10 @@ import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import com.olilay.golemreader.activities.ArticleActivity
 import com.olilay.golemreader.databinding.ArticleViewBinding
-import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.ArticleMetadata
 
 
-class ArticleAdapter(private val dataset: List<MinimalArticle>) :
+class ArticleAdapter(private val dataset: List<ArticleMetadata>) :
     RecyclerView.Adapter<ArticleAdapter.ViewHolder>() {
 
     class ViewHolder(val articleViewBinding: ArticleViewBinding) :

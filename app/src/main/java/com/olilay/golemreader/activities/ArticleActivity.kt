@@ -3,7 +3,7 @@ package com.olilay.golemreader.activities
 import android.os.Bundle
 import android.webkit.WebView
 import com.olilay.golemreader.R
-import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.ArticleMetadata
 import com.olilay.golemreader.parser.article.ArticleParseController
 import java.lang.Exception
 import java.lang.RuntimeException
@@ -16,8 +16,8 @@ class ArticleActivity : AppActivity() {
         super.onCreate(savedInstanceState)
 
         val extras = intent.extras
-        val minimalArticle = extras?.getParcelable("minimalArticle") as MinimalArticle?
-                ?: throw RuntimeException("MinimalArticle object not supplied by caller!")
+        val minimalArticle = extras?.getParcelable("minimalArticle") as ArticleMetadata?
+            ?: throw RuntimeException("MinimalArticle object not supplied by caller!")
 
         articleParseController = ArticleParseController(minimalArticle, this)
         showArticle()
@@ -49,17 +49,21 @@ class ArticleActivity : AppActivity() {
             else -> resources.getString(R.string.error)
         }
 
-        showErrorMessage(message, R.id.article_progress_bar, R.id.article_error_image,
-                R.id.article_error_message)
+        showErrorMessage(
+            message, R.id.article_progress_bar, R.id.article_error_image,
+            R.id.article_error_message
+        )
     }
 
     private fun setWebView(content: String) {
         val webView: WebView = findViewById(R.id.article_webview)
-        webView.loadDataWithBaseURL(null, content, "text/html; charset=utf-8",
-                "utf8", null)
+        webView.loadDataWithBaseURL(
+            null, content, "text/html; charset=utf-8",
+            "utf8", null
+        )
     }
 
-    private fun styleContent(content: String) : String {
+    private fun styleContent(content: String): String {
         return getStyleHtml() + content
     }
 
@@ -79,15 +83,15 @@ class ArticleActivity : AppActivity() {
         """.trimIndent().format()
     }
 
-    private fun getBackgroundColorHex() : String {
+    private fun getBackgroundColorHex(): String {
         return getColorHex(R.color.colorBackground)
     }
 
-    private fun getTextColorHex() : String {
+    private fun getTextColorHex(): String {
         return getColorHex(R.color.colorText)
     }
 
-    private fun getColorHex(attribute: Int) : String {
+    private fun getColorHex(attribute: Int): String {
         val color = getColor(attribute)
         return String.format("#%06X", (0xFFFFFF and color))
 

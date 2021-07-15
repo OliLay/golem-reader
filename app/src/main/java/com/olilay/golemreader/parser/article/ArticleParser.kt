@@ -2,7 +2,7 @@ package com.olilay.golemreader.parser.article
 
 import android.util.Log
 import com.olilay.golemreader.models.Article
-import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.ArticleMetadata
 import com.olilay.golemreader.parser.exception.ParseException
 import com.olilay.golemreader.parser.helper.ParserUtils
 import kotlinx.coroutines.*
@@ -18,10 +18,10 @@ const val GOLEM_URL = "https://golem.de"
  */
 class ArticleParser {
 
-    suspend fun parseAsync(minimalArticle: MinimalArticle) : Result<Article> {
+    suspend fun parseAsync(articleMetadata: ArticleMetadata): Result<Article> {
         return withContext(Dispatchers.IO) {
             try {
-                Result.success(parse(minimalArticle))
+                Result.success(parse(articleMetadata))
             } catch (e: Exception) {
                 Result.failure(e)
             }
@@ -29,20 +29,21 @@ class ArticleParser {
     }
 
     /**
-     * Parses the given [MinimalArticle] into an [Article].
+     * Parses the given [ArticleMetadata] into an [Article].
      *
-     * @param minimalArticle The [MinimalArticle] to be parsed.
+     * @param articleMetadata The [ArticleMetadata] to be parsed.
      * @return The [Article] with the [Article.content] field populated.
      */
-    private fun parse(minimalArticle: MinimalArticle): Article {
+    private fun parse(articleMetadata: ArticleMetadata): Article {
         return Article(
-                minimalArticle.heading,
-                minimalArticle.url,
-                minimalArticle.description,
-                minimalArticle.date,
-                minimalArticle.amountOfComments,
-                minimalArticle.imageUrl!!,
-                getContent(minimalArticle.url))
+            articleMetadata.heading,
+            articleMetadata.url,
+            articleMetadata.description,
+            articleMetadata.date,
+            articleMetadata.amountOfComments,
+            articleMetadata.imageUrl!!,
+            getContent(articleMetadata.url)
+        )
     }
 
     /**
@@ -110,7 +111,7 @@ class ArticleParser {
      * @param elements All [Elements] of the article.
      * @return [Elements] of the article.
      */
-    private fun alterContent(elements: Elements) : Elements {
+    private fun alterContent(elements: Elements): Elements {
         return insertAdSeparators(removeNotNeededContent(elements))
     }
 
@@ -120,7 +121,7 @@ class ArticleParser {
      */
     private fun removeNotNeededContent(elements: Elements): Elements {
         val content = elements.select("article")
-                ?: throw ParseException("Could not get content of $elements")
+            ?: throw ParseException("Could not get content of $elements")
         content.select("figure[class=hero]")?.remove()
         content.select("img")?.remove()
         content.select("div[class=authors]")?.remove()

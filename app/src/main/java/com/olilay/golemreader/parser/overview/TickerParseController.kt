@@ -2,19 +2,18 @@ package com.olilay.golemreader.parser.overview
 
 import android.graphics.Bitmap
 import com.olilay.golemreader.activities.OverviewActivity
-import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.ArticleMetadata
 import com.olilay.golemreader.parser.helper.ImageFetcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.lang.Exception
 
 class TickerParseController(activity: OverviewActivity) {
-    var parsing: Boolean = false
+    var parsing = false
     private var activity: WeakReference<OverviewActivity> = WeakReference(activity)
-    private var minimalArticles: ArrayList<MinimalArticle> = ArrayList()
+    private var articleMetadatas: ArrayList<ArticleMetadata> = ArrayList()
     private var rssParser = RssParser()
 
     private var expectedArticleAmount: Int
@@ -26,7 +25,7 @@ class TickerParseController(activity: OverviewActivity) {
     fun startParse() {
         if (!parsing) {
             parsing = true
-            minimalArticles.clear()
+            articleMetadatas.clear()
 
             CoroutineScope(Dispatchers.Main).launch {
                 val minimalArticles = rssParser.parseAsync()
@@ -35,7 +34,7 @@ class TickerParseController(activity: OverviewActivity) {
         }
     }
 
-    private fun onTickerParsed(tickerResult: Result<List<MinimalArticle>>) {
+    private fun onTickerParsed(tickerResult: Result<List<ArticleMetadata>>) {
         if (tickerResult.isFailure) {
             onRefreshFailed(tickerResult.exceptionOrNull() as Exception)
         } else {
@@ -60,11 +59,11 @@ class TickerParseController(activity: OverviewActivity) {
         }
     }
 
-    private fun onImageDownloaded(minimalArticle: MinimalArticle, bitmap: Bitmap) {
-        minimalArticle.setArticleThumbnail(bitmap)
-        minimalArticles.add(minimalArticle)
+    private fun onImageDownloaded(articleMetadata: ArticleMetadata, bitmap: Bitmap) {
+        articleMetadata.setArticleThumbnail(bitmap)
+        articleMetadatas.add(articleMetadata)
 
-        if (minimalArticles.size >= expectedArticleAmount) {
+        if (articleMetadatas.size >= expectedArticleAmount) {
             onEveryImageDownloaded()
         }
     }
@@ -72,8 +71,8 @@ class TickerParseController(activity: OverviewActivity) {
     private fun onEveryImageDownloaded() {
         parsing = false
         expectedArticleAmount = -1
-        minimalArticles.sortByDescending { a -> a.date }
-        getOverviewActivity().onRefreshFinished(minimalArticles)
+        articleMetadatas.sortByDescending { a -> a.date }
+        getOverviewActivity().onRefreshFinished(articleMetadatas)
     }
 
     private fun onRefreshFailed(e: Exception) {

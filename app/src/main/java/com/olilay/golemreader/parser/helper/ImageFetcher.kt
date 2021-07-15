@@ -12,7 +12,7 @@ import java.net.URL
  * Gets the image of an URL asynchronously.
  */
 object ImageFetcher {
-    suspend fun forceGetAsync(url: URL) : Bitmap {
+    suspend fun forceGetAsync(url: URL): Bitmap {
         return withContext(Dispatchers.IO) {
             val result = downloadImage(url)
             result.getOrDefault(getDefaultBitmap())

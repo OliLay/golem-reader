@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.olilay.golemreader.adapter.ArticleAdapter
-import com.olilay.golemreader.models.MinimalArticle
+import com.olilay.golemreader.models.ArticleMetadata
 import com.olilay.golemreader.parser.overview.TickerParseController
 import java.lang.Exception
 
@@ -54,11 +54,11 @@ class OverviewActivity : AppActivity() {
         }
     }
 
-    fun onRefreshFinished(minimalArticles: List<MinimalArticle>) {
+    fun onRefreshFinished(articleMetadata: List<ArticleMetadata>) {
         setViewVisibility(false, R.id.overview_progress_bar)
         setViewVisibility(true, R.id.overview_recycler_view)
 
-        recyclerView.adapter = ArticleAdapter(minimalArticles)
+        recyclerView.adapter = ArticleAdapter(articleMetadata)
     }
 
     fun onRefreshFailed(e: Exception) {
@@ -67,8 +67,10 @@ class OverviewActivity : AppActivity() {
             else -> resources.getString(R.string.error)
         }
 
-        showErrorMessage(message, R.id.overview_progress_bar, R.id.overview_error_image,
-                R.id.overview_error_message)
+        showErrorMessage(
+            message, R.id.overview_progress_bar, R.id.overview_error_image,
+            R.id.overview_error_message
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
