@@ -56,7 +56,7 @@ abstract class Page(
         getArticleElements().select("a[class=gbox_btn]").html(attr)
     }
 
-    fun getHtml(): String {
+    fun getArticleHtml(): String {
         return getArticleElements().html()
     }
 

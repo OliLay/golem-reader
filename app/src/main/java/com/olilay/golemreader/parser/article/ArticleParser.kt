@@ -61,7 +61,7 @@ class ArticleParser {
         for (page in pages) {
             page.removeNotNeededContent()
             page.addStyling()
-            overallContent += page.getHtml()
+            overallContent += page.getArticleHtml()
         }
 
         return overallContent + firstPage.getCommentLink()
