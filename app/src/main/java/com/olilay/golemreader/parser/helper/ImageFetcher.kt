@@ -12,8 +12,8 @@ import java.net.URL
  * Gets the image of an URL asynchronously.
  */
 object ImageFetcher {
-    fun forceGetAsync(url: URL) : Deferred<Bitmap> {
-        return CoroutineScope(Dispatchers.IO).async {
+    suspend fun forceGetAsync(url: URL) : Bitmap {
+        return withContext(Dispatchers.IO) {
             val result = downloadImage(url)
             result.getOrDefault(getDefaultBitmap())
         }

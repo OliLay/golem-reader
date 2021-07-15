@@ -1,12 +1,11 @@
 package com.olilay.golemreader.parser.article
 
-import android.os.AsyncTask
 import android.util.Log
 import com.olilay.golemreader.models.Article
 import com.olilay.golemreader.models.MinimalArticle
-import com.olilay.golemreader.parser.helper.AsyncTaskResult
 import com.olilay.golemreader.parser.exception.ParseException
 import com.olilay.golemreader.parser.helper.ParserUtils
+import kotlinx.coroutines.*
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.lang.Exception
@@ -17,23 +16,16 @@ const val GOLEM_URL = "https://golem.de"
 /**
  * Handles downloading and parsing of an [Article].
  */
-class ArticleParser(private val minimalArticle: MinimalArticle,
-                    private val articleParseController: ArticleParseController
-) : AsyncTask<Void, Void, AsyncTaskResult<Article>>() {
+class ArticleParser {
 
-    override fun doInBackground(vararg void: Void): AsyncTaskResult<Article> {
-        return try {
-            AsyncTaskResult(parse(minimalArticle))
-        } catch (e: Exception) {
-            Log.e("RssParser", e.toString())
-            AsyncTaskResult(minimalArticle as Article, e)
+    suspend fun parseAsync(minimalArticle: MinimalArticle) : Result<Article> {
+        return withContext(Dispatchers.IO) {
+            try {
+                Result.success(parse(minimalArticle))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
-    }
-
-    override fun onPostExecute(result: AsyncTaskResult<Article>) {
-        super.onPostExecute(result)
-
-        articleParseController.onContentParsed(result)
     }
 
     /**

@@ -14,15 +14,14 @@ import kotlin.collections.ArrayList
 
 const val GOLEM_RSS_URL = "https://rss.golem.de/rss.php?feed=RSS2.0"
 
-class RssParser(private val tickerParseController: TickerParseController) {
-    fun parseAsync() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val result : Result<List<MinimalArticle>> = try {
+class RssParser {
+    suspend fun parseAsync() : Result<List<MinimalArticle>> {
+        return withContext(Dispatchers.IO) {
+            try {
                 Result.success(parse())
             } catch (e: Exception) {
                 Result.failure(e)
             }
-            tickerParseController.onTickerParsed(result)
         }
     }
 

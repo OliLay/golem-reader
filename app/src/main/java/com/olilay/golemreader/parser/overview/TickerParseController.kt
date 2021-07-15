@@ -15,6 +15,7 @@ class TickerParseController(activity: OverviewActivity) {
     var parsing: Boolean = false
     private var activity: WeakReference<OverviewActivity> = WeakReference(activity)
     private var minimalArticles: ArrayList<MinimalArticle> = ArrayList()
+    private var rssParser = RssParser()
 
     private var expectedArticleAmount: Int
 
@@ -27,23 +28,26 @@ class TickerParseController(activity: OverviewActivity) {
             parsing = true
             minimalArticles.clear()
 
-            RssParser(this).parseAsync()
+            CoroutineScope(Dispatchers.Main).launch {
+                val minimalArticles = rssParser.parseAsync()
+                onTickerParsed(minimalArticles)
+            }
         }
     }
 
-    fun onTickerParsed(tickerResult: Result<List<MinimalArticle>>) {
+    private fun onTickerParsed(tickerResult: Result<List<MinimalArticle>>) {
         if (tickerResult.isFailure) {
             onRefreshFailed(tickerResult.exceptionOrNull() as Exception)
         } else {
-            val minimalArticles = tickerResult.getOrNull()
+            val minimalArticles = tickerResult.getOrThrow()
 
-            minimalArticles!!.forEach { minimalArticle ->
+            minimalArticles.forEach { minimalArticle ->
                 if (minimalArticle.imageUrl == null) {
                     onImageDownloaded(minimalArticle, ImageFetcher.getDefaultBitmap())
                 } else {
                     CoroutineScope(Dispatchers.Main).launch {
                         val image = ImageFetcher.forceGetAsync(minimalArticle.imageUrl!!)
-                        onImageDownloaded(minimalArticle, image.await())
+                        onImageDownloaded(minimalArticle, image)
                     }
                 }
             }
