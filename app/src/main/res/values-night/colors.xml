@@ -2,4 +2,5 @@
 <resources>
     <color name="colorBackground">@color/primary_material_dark</color>
     <color name="colorText">@color/colorAccent</color>
+    <color name="colorLink">#ffffff</color>
 </resources>

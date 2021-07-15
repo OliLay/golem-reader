@@ -78,7 +78,7 @@ class ArticleActivity : AppActivity() {
               color: ${getTextColorHex()};
             }
             a:link {
-              color: white;
+              color: ${getLinkColorHex()};
             }
             </style>
             </head>
@@ -93,9 +93,12 @@ class ArticleActivity : AppActivity() {
         return getColorHex(R.color.colorText)
     }
 
+    private fun getLinkColorHex() : String {
+        return getColorHex(R.color.colorLink)
+    }
+
     private fun getColorHex(attribute: Int): String {
         val color = getColor(attribute)
         return String.format("#%06X", (0xFFFFFF and color))
-
     }
 }
