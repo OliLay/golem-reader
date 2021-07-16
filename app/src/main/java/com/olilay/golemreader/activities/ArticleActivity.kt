@@ -1,12 +1,14 @@
 package com.olilay.golemreader.activities
 
+import android.content.Intent
 import android.os.Bundle
-import android.webkit.WebChromeClient
+import android.view.Menu
+import android.view.MenuItem
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import com.olilay.golemreader.R
 import com.olilay.golemreader.models.article.ArticleMetadata
 import com.olilay.golemreader.parser.article.ArticleParseController
+import org.w3c.dom.Comment
 import java.lang.Exception
 import java.lang.RuntimeException
 
@@ -18,11 +20,28 @@ class ArticleActivity : AppActivity() {
         super.onCreate(savedInstanceState)
 
         val extras = intent.extras
-        val minimalArticle = extras?.getParcelable("minimalArticle") as ArticleMetadata?
-            ?: throw RuntimeException("MinimalArticle object not supplied by caller!")
+        val articleMetadata = extras?.getParcelable("articleMetadata") as ArticleMetadata?
+            ?: throw RuntimeException("articleMetadata object not supplied by caller!")
 
-        articleParseController = ArticleParseController(minimalArticle, this)
+        articleParseController = ArticleParseController(articleMetadata, this)
         showArticle()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.toolbar_article, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_comments) {
+            switchToCommentActivity()
+        }
+        return true
+    }
+
+    private fun switchToCommentActivity() {
+        val intent = Intent(this, CommentOverviewActivity::class.java)
+        startActivity(intent)
     }
 
     private fun showArticle() {

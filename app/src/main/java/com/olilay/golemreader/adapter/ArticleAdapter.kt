@@ -36,7 +36,7 @@ class ArticleAdapter(private val dataset: List<ArticleMetadata>) :
 
         holder.articleViewBinding.root.setOnClickListener { v ->
             val intent = Intent(v.context, ArticleActivity::class.java)
-            intent.putExtra("minimalArticle", item)
+            intent.putExtra("articleMetadata", item)
             v.context.startActivity(intent)
         }
     }
