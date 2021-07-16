@@ -2,46 +2,25 @@ package com.olilay.golemreader.activities
 
 import android.os.Bundle
 import com.olilay.golemreader.R
-import android.view.Menu
-import android.view.MenuItem
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.olilay.golemreader.adapter.ArticleAdapter
 import com.olilay.golemreader.models.article.ArticleMetadata
-import com.olilay.golemreader.parser.overview.TickerParseController
+import com.olilay.golemreader.parser.article.overview.TickerParseController
 import java.lang.Exception
 
-
-class OverviewActivity : AppActivity() {
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var refreshLayout: SwipeRefreshLayout
+class OverviewActivity : CardViewActivity(
+    R.layout.activity_overview,
+    R.id.overview_swiperefresh,
+    R.id.overview_recycler_view
+) {
     private lateinit var tickerParseController: TickerParseController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setContentView(R.layout.activity_overview)
-        super.onCreate(savedInstanceState)
-
-        //SWIPE REFRESH LAYOUT
-        refreshLayout = findViewById(R.id.overview_swiperefresh)
-        refreshLayout.setOnRefreshListener { refresh() }
-
-        //CARD VIEW
-        layoutManager = LinearLayoutManager(this)
-
-        recyclerView = findViewById(R.id.overview_recycler_view)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true)
-        setRecyclerViewScrollListener()
-
-        //PARSE MANAGER
         tickerParseController = TickerParseController(this)
 
-        refresh()
+        super.onCreate(savedInstanceState)
     }
 
-    private fun refresh() {
+    override fun refresh() {
         refreshLayout.isRefreshing = false //make SwipeRefreshLayout loading animation disappear
 
         if (!tickerParseController.parsing) {
@@ -71,22 +50,5 @@ class OverviewActivity : AppActivity() {
             message, R.id.overview_progress_bar, R.id.overview_error_image,
             R.id.overview_error_message
         )
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_refresh) {
-            refresh()
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun setRecyclerViewScrollListener() {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {})
     }
 }

@@ -1,4 +1,4 @@
-package com.olilay.golemreader.parser.overview
+package com.olilay.golemreader.parser.article.overview
 
 import android.graphics.Bitmap
 import com.olilay.golemreader.activities.OverviewActivity

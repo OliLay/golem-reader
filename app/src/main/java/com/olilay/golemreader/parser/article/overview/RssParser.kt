@@ -1,4 +1,4 @@
-package com.olilay.golemreader.parser.overview
+package com.olilay.golemreader.parser.article.overview
 
 import com.olilay.golemreader.models.article.ArticleMetadata
 import com.olilay.golemreader.parser.helper.ParserUtils
