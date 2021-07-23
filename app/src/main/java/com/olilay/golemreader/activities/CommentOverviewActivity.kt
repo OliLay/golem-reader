@@ -3,10 +3,13 @@ package com.olilay.golemreader.activities
 import android.os.Bundle
 import com.olilay.golemreader.R
 import com.olilay.golemreader.adapter.ArticleAdapter
+import com.olilay.golemreader.adapter.CommentAdapter
 import com.olilay.golemreader.models.article.ArticleMetadata
 import com.olilay.golemreader.controller.CommentOverviewParseController
 import com.olilay.golemreader.models.comment.CommentMetadata
 import java.lang.Exception
+import java.lang.RuntimeException
+import java.net.URL
 
 
 class CommentOverviewActivity : CardViewActivity(
@@ -14,9 +17,14 @@ class CommentOverviewActivity : CardViewActivity(
     R.id.comment_overview_swiperefresh,
     R.id.comment_overview_recycler_view
 ) {
-    private var commentOverviewParseController = CommentOverviewParseController(this)
+    private lateinit var commentOverviewParseController: CommentOverviewParseController
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val commentsUrl = intent.extras?.getSerializable("commentsUrl") as URL?
+            ?: throw RuntimeException("commentsUrl object not supplied by caller!")
+
+        commentOverviewParseController = CommentOverviewParseController(this, commentsUrl)
+
         super.onCreate(savedInstanceState)
     }
 
@@ -33,12 +41,11 @@ class CommentOverviewActivity : CardViewActivity(
         }
     }
 
-    fun onRefreshFinished(articleMetadata: List<CommentMetadata>) {
-        setViewVisibility(false, R.id.overview_progress_bar)
-        setViewVisibility(true, R.id.overview_recycler_view)
+    fun onRefreshFinished(commentMetadata: List<CommentMetadata>) {
+        setViewVisibility(false, R.id.comment_overview_progress_bar)
+        setViewVisibility(true, R.id.comment_overview_recycler_view)
 
-        // TODO:
-        //recyclerView.adapter = ArticleAdapter(articleMetadata)
+        recyclerView.adapter = CommentAdapter(commentMetadata)
     }
 
     fun onRefreshFailed(e: Exception) {
@@ -48,8 +55,8 @@ class CommentOverviewActivity : CardViewActivity(
         }
 
         showErrorMessage(
-            message, R.id.overview_progress_bar, R.id.overview_error_image,
-            R.id.overview_error_message
+            message, R.id.comment_overview_progress_bar, R.id.comment_overview_error_image,
+            R.id.comment_overview_error_message
         )
     }
 }

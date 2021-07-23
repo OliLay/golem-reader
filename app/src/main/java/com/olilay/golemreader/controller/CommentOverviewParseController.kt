@@ -1,7 +1,7 @@
 package com.olilay.golemreader.controller
 
+import com.olilay.golemreader.R
 import com.olilay.golemreader.activities.CommentOverviewActivity
-import com.olilay.golemreader.models.article.Article
 import com.olilay.golemreader.models.comment.CommentMetadata
 import com.olilay.golemreader.parser.comment.overview.CommentOverviewParser
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +12,8 @@ import java.lang.ref.WeakReference
 import java.net.URL
 
 class CommentOverviewParseController(
-    commentOverviewActivity: CommentOverviewActivity
+    commentOverviewActivity: CommentOverviewActivity,
+    private val commentsUrl: URL
 ) {
     private var commentOverviewActivity: WeakReference<CommentOverviewActivity> =
         WeakReference(commentOverviewActivity)
@@ -20,7 +21,7 @@ class CommentOverviewParseController(
 
     var parsing = false
 
-    fun startParse(commentsUrl: URL) {
+    fun startParse() {
         if (!parsing) {
             parsing = true
 

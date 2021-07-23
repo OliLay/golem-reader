@@ -13,6 +13,7 @@ import java.util.*
 open class CommentMetadata(
     open var heading: String,
     open var url: URL,
+    open var author: String,
     open var dateCreated: Date,
 ) : Parcelable {
 

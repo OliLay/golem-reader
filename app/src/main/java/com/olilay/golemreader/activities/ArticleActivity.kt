@@ -42,7 +42,7 @@ class ArticleActivity : AppActivity() {
 
     private fun switchToCommentActivity() {
         val intent = Intent(this, CommentOverviewActivity::class.java)
-        intent.putExtra("commentsUrl", )
+        intent.putExtra("commentsUrl", article.commentsUrl)
         startActivity(intent)
     }
 

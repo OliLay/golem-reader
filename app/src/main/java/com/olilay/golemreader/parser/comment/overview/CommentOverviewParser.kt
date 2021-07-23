@@ -8,8 +8,13 @@ import com.olilay.golemreader.models.article.page.Page
 import com.olilay.golemreader.models.comment.CommentMetadata
 import com.olilay.golemreader.parser.helper.ParserUtils
 import kotlinx.coroutines.*
+import org.jsoup.nodes.Element
 import java.lang.Exception
+import java.net.MalformedURLException
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CommentOverviewParser {
 
@@ -24,67 +29,55 @@ class CommentOverviewParser {
     }
 
     private fun parse(commentsUrl: URL): List<CommentMetadata> {
-        val commentMetadatas : List<CommentMetadata> = ArrayList()
+        val commentMetadatas = ArrayList<CommentMetadata>()
 
-        var jsoupDocument = ParserUtils.getDocument(commentsUrl.toString())
+        val jsoupDocument = ParserUtils.getDocument(commentsUrl.toString())
+        val commentElements = jsoupDocument.select("ol[class=list-comments]").select("li")
 
-        return ArrayList()
-    }
+        for (element in commentElements) {
+            val heading = getHeading(element)
+            val url = getUrl(element)
+            val date = getDate(element)
+            val author = getAuthor(element)
 
-    /**
-     * Downloads the complete content of the given [URL] (Golem.de Article) and parses it.
-     * @return A [String] that contains the content of the given article.
-     */
-    private fun parseArticle(url: URL): String {
-        val firstPage = FirstPage(url)
-        val pages: MutableSet<Page> = mutableSetOf(firstPage)
-        var overallContent = ""
-
-        if (hasArticleMultiplePages(firstPage)) {
-            val furtherPages = getFurtherPages(firstPage)
-            pages.addAll(furtherPages)
+            val metadata = CommentMetadata(heading, url, author, date)
+            commentMetadatas.add(metadata)
         }
 
-        for (page in pages) {
-            page.removeNotNeededContent()
-            page.addStyling()
-            overallContent += page.getArticleHtml()
-        }
-
-        return overallContent + firstPage.getCommentLink()
+        return commentMetadatas
     }
 
-    /**
-     * Checks if the article contains multiple pages
-     * @return true if the article contains more than one page, else false
-     */
-    private fun hasArticleMultiplePages(firstPage: Page): Boolean {
-        val listPagesIndicator = firstPage.getJsoupDocument().select("ol[class=list-pages]")
-        return listPagesIndicator.size > 0
+    private fun getHeading(element: Element): String {
+        return element.select("a").html()
     }
 
-    /**
-     * Gets all [URL]s of the article's pages.
-     * @return Set of URLs to the pages (no duplicates)
-     */
-    private fun getFurtherPages(firstPage: Page): MutableSet<Page> {
-        val listPagesIndicator = firstPage.getJsoupDocument().select("ol[class=list-pages]")
-        val aTags = listPagesIndicator.select("a")
-        val pages: MutableSet<Page> = mutableSetOf()
+    private fun getUrl(element: Element): URL {
+        val urlString = element.select("a").attr("href")
 
-        for (elem in aTags) {
-            val hrefAttr = elem.attr("href")
-
-            if (hrefAttr != null) {
-                try {
-                   // val pageUrl = URL(GOLEM_URL + hrefAttr)
-                   // pages.add(LaterPage(pageUrl))
-                } catch (e: Exception) {
-                    Log.w("ArticleParser", "$elem is not a valid URL. Discarding!")
-                }
-            }
+        return try {
+            URL(urlString)
+        } catch (e: MalformedURLException) {
+            Log.e("CommentOverviewParser", "Could not parse URL '$urlString'")
+            URL("https://google.de")
         }
+    }
 
-        return pages
+    private fun getDate(element: Element): Date {
+        val dateString = element.select("h3")
+            .first()
+            ?.childNode(2)
+            ?.outerHtml()
+            ?.trim()
+
+        return if (dateString == null) {
+            Log.e("CommentOverviewParser", "Could not parse date, date string is null.")
+            Date()
+        } else {
+            SimpleDateFormat("dd.MM.yy HH:mm", Locale.GERMAN).parse(dateString) ?: Date()
+        }
+    }
+
+    private fun getAuthor(element: Element): String {
+        return element.select("strong").html()
     }
 }
