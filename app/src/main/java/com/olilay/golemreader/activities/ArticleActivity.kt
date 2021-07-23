@@ -7,13 +7,14 @@ import android.view.MenuItem
 import android.webkit.WebView
 import com.olilay.golemreader.R
 import com.olilay.golemreader.models.article.ArticleMetadata
-import com.olilay.golemreader.parser.article.ArticleParseController
-import org.w3c.dom.Comment
+import com.olilay.golemreader.controller.ArticleParseController
+import com.olilay.golemreader.models.article.Article
 import java.lang.Exception
 import java.lang.RuntimeException
 
 class ArticleActivity : AppActivity() {
     private lateinit var articleParseController: ArticleParseController
+    private lateinit var article: Article
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_article)
@@ -41,6 +42,7 @@ class ArticleActivity : AppActivity() {
 
     private fun switchToCommentActivity() {
         val intent = Intent(this, CommentOverviewActivity::class.java)
+        intent.putExtra("commentsUrl", )
         startActivity(intent)
     }
 
@@ -55,8 +57,10 @@ class ArticleActivity : AppActivity() {
         }
     }
 
-    fun onContentParsed(content: String) {
-        val styledContent = styleContent(content)
+    fun onContentParsed(article: Article) {
+        this.article = article
+
+        val styledContent = styleContent(article.content)
         setWebViewContent(styledContent)
         setViewVisibility(true, R.id.article_webview)
     }

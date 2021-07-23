@@ -1,33 +1,42 @@
-package com.olilay.golemreader.parser.article
+package com.olilay.golemreader.parser.comment.overview
 
 import android.util.Log
 import com.olilay.golemreader.models.article.*
 import com.olilay.golemreader.models.article.page.FirstPage
 import com.olilay.golemreader.models.article.page.LaterPage
 import com.olilay.golemreader.models.article.page.Page
+import com.olilay.golemreader.models.comment.CommentMetadata
+import com.olilay.golemreader.parser.helper.ParserUtils
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.net.URL
 
-const val GOLEM_URL = "https://golem.de"
+class CommentOverviewParser {
 
-/**
- * Handles downloading and parsing of an [Article].
- */
-class ArticleParser {
-
-    suspend fun parseAsync(articleMetadata: ArticleMetadata): Result<Article> {
+    suspend fun parseAsync(commentsUrl: URL): Result<List<CommentMetadata>> {
         return withContext(Dispatchers.IO) {
             try {
-                Result.success(parse(articleMetadata))
+                Result.success(parse(commentsUrl))
             } catch (e: Exception) {
                 Result.failure(e)
             }
         }
     }
 
-    private fun parse(articleMetadata: ArticleMetadata): Article {
-        val firstPage = FirstPage(articleMetadata.url)
+    private fun parse(commentsUrl: URL): List<CommentMetadata> {
+        val commentMetadatas : List<CommentMetadata> = ArrayList()
+
+        var jsoupDocument = ParserUtils.getDocument(commentsUrl.toString())
+
+        return ArrayList()
+    }
+
+    /**
+     * Downloads the complete content of the given [URL] (Golem.de Article) and parses it.
+     * @return A [String] that contains the content of the given article.
+     */
+    private fun parseArticle(url: URL): String {
+        val firstPage = FirstPage(url)
         val pages: MutableSet<Page> = mutableSetOf(firstPage)
         var overallContent = ""
 
@@ -42,21 +51,7 @@ class ArticleParser {
             overallContent += page.getArticleHtml()
         }
 
-        val commentLink = firstPage.getCommentLink()
-        return assembleArticle(articleMetadata, overallContent, commentLink)
-    }
-
-    private fun assembleArticle(articleMetadata: ArticleMetadata, content: String, commentsUrl: URL) : Article {
-        return Article(
-            articleMetadata.heading,
-            articleMetadata.url,
-            articleMetadata.description,
-            articleMetadata.date,
-            articleMetadata.amountOfComments,
-            articleMetadata.imageUrl!!,
-            content,
-            commentsUrl
-        )
+        return overallContent + firstPage.getCommentLink()
     }
 
     /**
@@ -82,8 +77,8 @@ class ArticleParser {
 
             if (hrefAttr != null) {
                 try {
-                    val pageUrl = URL(GOLEM_URL + hrefAttr)
-                    pages.add(LaterPage(pageUrl))
+                   // val pageUrl = URL(GOLEM_URL + hrefAttr)
+                   // pages.add(LaterPage(pageUrl))
                 } catch (e: Exception) {
                     Log.w("ArticleParser", "$elem is not a valid URL. Discarding!")
                 }

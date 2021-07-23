@@ -1,8 +1,11 @@
 package com.olilay.golemreader.activities
 
+import android.os.Bundle
 import com.olilay.golemreader.R
 import com.olilay.golemreader.adapter.ArticleAdapter
 import com.olilay.golemreader.models.article.ArticleMetadata
+import com.olilay.golemreader.controller.CommentOverviewParseController
+import com.olilay.golemreader.models.comment.CommentMetadata
 import java.lang.Exception
 
 
@@ -11,27 +14,31 @@ class CommentOverviewActivity : CardViewActivity(
     R.id.comment_overview_swiperefresh,
     R.id.comment_overview_recycler_view
 ) {
-    // TODO
-    //private lateinit var tickerParseController: TickerParseController
+    private var commentOverviewParseController = CommentOverviewParseController(this)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun refresh() {
         refreshLayout.isRefreshing = false // make SwipeRefreshLayout loading animation disappear
-    // TODO
-      //  if (!tickerParseController.parsing) {
-//            setViewVisibility(true, R.id.overview_progress_bar)
-  //          setViewVisibility(false, R.id.overview_recycler_view)
-    //        setViewVisibility(false, R.id.overview_error_image)
-      //      setViewVisibility(false, R.id.overview_error_message)
 
-         //   tickerParseController.startParse()
-        //}
+        if (!commentOverviewParseController.parsing) {
+            setViewVisibility(true, R.id.comment_overview_progress_bar)
+            setViewVisibility(false, R.id.comment_overview_recycler_view)
+            setViewVisibility(false, R.id.comment_overview_error_image)
+            setViewVisibility(false, R.id.comment_overview_error_message)
+
+            commentOverviewParseController.startParse()
+        }
     }
 
-    fun onRefreshFinished(articleMetadata: List<ArticleMetadata>) {
+    fun onRefreshFinished(articleMetadata: List<CommentMetadata>) {
         setViewVisibility(false, R.id.overview_progress_bar)
         setViewVisibility(true, R.id.overview_recycler_view)
 
-        recyclerView.adapter = ArticleAdapter(articleMetadata)
+        // TODO:
+        //recyclerView.adapter = ArticleAdapter(articleMetadata)
     }
 
     fun onRefreshFailed(e: Exception) {

@@ -1,8 +1,9 @@
-package com.olilay.golemreader.parser.article.overview
+package com.olilay.golemreader.controller
 
 import android.graphics.Bitmap
 import com.olilay.golemreader.activities.OverviewActivity
 import com.olilay.golemreader.models.article.ArticleMetadata
+import com.olilay.golemreader.parser.article.overview.RssParser
 import com.olilay.golemreader.parser.helper.ImageFetcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
