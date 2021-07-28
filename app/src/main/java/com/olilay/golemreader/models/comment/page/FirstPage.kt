@@ -6,10 +6,10 @@ class FirstPage(override var url: URL) : Page(url) {
 
     private fun hasFurtherPages(): Boolean {
         /**
-         * one ol[class=list-pages] is always the button to switch topics,
-         * second one is for switching comment pages
+         * two ol[class=list-pages] are always the button to switch topics,
+         * possible third one is for switching comment pages
          */
-        return getJsoupDocument().select("ol[class=list-pages]").size >= 2
+        return getJsoupDocument().select("ol[class=list-pages]").size >= 3
     }
 
     fun furtherPages(): List<Page> {
