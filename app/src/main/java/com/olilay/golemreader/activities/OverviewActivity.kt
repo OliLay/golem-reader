@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.olilay.golemreader.R
 import com.olilay.golemreader.adapter.ArticleAdapter
 import com.olilay.golemreader.models.article.ArticleMetadata
-import com.olilay.golemreader.parser.article.overview.TickerParseController
+import com.olilay.golemreader.controller.TickerParseController
 import java.lang.Exception
 
 class OverviewActivity : CardViewActivity(

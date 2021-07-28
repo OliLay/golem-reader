@@ -1,8 +1,9 @@
-package com.olilay.golemreader.parser.article
+package com.olilay.golemreader.controller
 
 import com.olilay.golemreader.activities.ArticleActivity
 import com.olilay.golemreader.models.article.Article
 import com.olilay.golemreader.models.article.ArticleMetadata
+import com.olilay.golemreader.parser.article.ArticleParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class ArticleParseController(
         parsing = false
 
         if (articleTaskResult.isSuccess) {
-            articleActivity.get()!!.onContentParsed(articleTaskResult.getOrThrow().content)
+            articleActivity.get()!!.onContentParsed(articleTaskResult.getOrThrow())
         } else {
             articleActivity.get()!!.onParseFailed(articleTaskResult.exceptionOrNull() as Exception)
         }

@@ -26,30 +26,8 @@ class ArticleParser {
         }
     }
 
-    /**
-     * Parses the given [ArticleMetadata] into an [Article].
-     *
-     * @param articleMetadata The [ArticleMetadata] to be parsed.
-     * @return The [Article] with the [Article.content] field populated.
-     */
     private fun parse(articleMetadata: ArticleMetadata): Article {
-        return Article(
-            articleMetadata.heading,
-            articleMetadata.url,
-            articleMetadata.description,
-            articleMetadata.date,
-            articleMetadata.amountOfComments,
-            articleMetadata.imageUrl!!,
-            parseArticle(articleMetadata.url)
-        )
-    }
-
-    /**
-     * Downloads the complete content of the given [URL] (Golem.de Article) and parses it.
-     * @return A [String] that contains the content of the given article.
-     */
-    private fun parseArticle(url: URL): String {
-        val firstPage = FirstPage(url)
+        val firstPage = FirstPage(articleMetadata.url)
         val pages: MutableSet<Page> = mutableSetOf(firstPage)
         var overallContent = ""
 
@@ -64,7 +42,21 @@ class ArticleParser {
             overallContent += page.getArticleHtml()
         }
 
-        return overallContent + firstPage.getCommentLink()
+        val commentLink = firstPage.getCommentLink()
+        return assembleArticle(articleMetadata, overallContent, commentLink)
+    }
+
+    private fun assembleArticle(articleMetadata: ArticleMetadata, content: String, commentsUrl: URL) : Article {
+        return Article(
+            articleMetadata.heading,
+            articleMetadata.url,
+            articleMetadata.description,
+            articleMetadata.date,
+            articleMetadata.amountOfComments,
+            articleMetadata.imageUrl!!,
+            content,
+            commentsUrl
+        )
     }
 
     /**

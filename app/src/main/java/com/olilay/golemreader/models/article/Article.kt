@@ -12,5 +12,6 @@ class Article(
     override var date: Date,
     override var amountOfComments: Int,
     override var imageUrl: URL?,
-    var content: String
+    var content: String,
+    var commentsUrl: URL?,
 ) : ArticleMetadata(heading, url, description, date, imageUrl, amountOfComments)

@@ -9,7 +9,7 @@ import com.olilay.golemreader.databinding.ArticleViewBinding
 import com.olilay.golemreader.models.article.ArticleMetadata
 
 
-class ArticleAdapter(private val dataset: List<ArticleMetadata>) :
+class ArticleAdapter(private val data: List<ArticleMetadata>) :
     RecyclerView.Adapter<ArticleAdapter.ViewHolder>() {
 
     class ViewHolder(val articleViewBinding: ArticleViewBinding) :
@@ -25,7 +25,7 @@ class ArticleAdapter(private val dataset: List<ArticleMetadata>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = dataset[position]
+        val item = data[position]
 
         holder.articleViewBinding.articleHeading.text = item.heading
         holder.articleViewBinding.articleDescription.text = item.description
@@ -36,10 +36,10 @@ class ArticleAdapter(private val dataset: List<ArticleMetadata>) :
 
         holder.articleViewBinding.root.setOnClickListener { v ->
             val intent = Intent(v.context, ArticleActivity::class.java)
-            intent.putExtra("minimalArticle", item)
+            intent.putExtra("articleMetadata", item)
             v.context.startActivity(intent)
         }
     }
 
-    override fun getItemCount() = dataset.size
+    override fun getItemCount() = data.size
 }

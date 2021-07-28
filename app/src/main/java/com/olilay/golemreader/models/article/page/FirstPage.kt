@@ -5,10 +5,13 @@ import java.net.URL
 
 class FirstPage(override var url: URL) : Page(url) {
     /**
-     * Gets the link to the forum from a given [Elements] of an article.
-     * @return Link in HTML. If it could not be parsed, empty [String].
+     * Gets the URL to the forum from a given [Elements] of an article.
      */
-    fun getCommentLink(): String {
-        return getJsoupDocument().select("p[class=link-comments]")?.html() ?: ""
+    fun getCommentLink(): URL {
+        val extractedLink = getJsoupDocument()
+            .select("a[class=icon comment-count]")
+            .first()
+            .attr("href")
+        return URL(extractedLink)
     }
 }

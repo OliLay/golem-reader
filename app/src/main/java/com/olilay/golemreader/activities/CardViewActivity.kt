@@ -35,7 +35,7 @@ abstract class CardViewActivity(
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        menuInflater.inflate(R.menu.toolbar_refreshable, menu)
         return true
     }
 

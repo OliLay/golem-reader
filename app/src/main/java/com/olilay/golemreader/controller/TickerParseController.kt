@@ -1,8 +1,9 @@
-package com.olilay.golemreader.parser.article.overview
+package com.olilay.golemreader.controller
 
 import android.graphics.Bitmap
 import com.olilay.golemreader.activities.OverviewActivity
 import com.olilay.golemreader.models.article.ArticleMetadata
+import com.olilay.golemreader.parser.article.overview.RssParser
 import com.olilay.golemreader.parser.helper.ImageFetcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,8 +29,8 @@ class TickerParseController(activity: OverviewActivity) {
             articleMetadatas.clear()
 
             CoroutineScope(Dispatchers.Main).launch {
-                val minimalArticles = rssParser.parseAsync()
-                onTickerParsed(minimalArticles)
+                val articleMetadatas = rssParser.parseAsync()
+                onTickerParsed(articleMetadatas)
             }
         }
     }
@@ -38,24 +39,24 @@ class TickerParseController(activity: OverviewActivity) {
         if (tickerResult.isFailure) {
             onRefreshFailed(tickerResult.exceptionOrNull() as Exception)
         } else {
-            val minimalArticles = tickerResult.getOrThrow()
+            val articleMetadatas = tickerResult.getOrThrow()
 
-            minimalArticles.forEach { minimalArticle ->
-                if (minimalArticle.imageUrl == null) {
-                    onImageDownloaded(minimalArticle, ImageFetcher.getDefaultBitmap())
+            articleMetadatas.forEach { articleMetadata ->
+                if (articleMetadata.imageUrl == null) {
+                    onImageDownloaded(articleMetadata, ImageFetcher.getDefaultBitmap())
                 } else {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val image = ImageFetcher.forceGetAsync(minimalArticle.imageUrl!!)
-                        onImageDownloaded(minimalArticle, image)
+                        val image = ImageFetcher.forceGetAsync(articleMetadata.imageUrl!!)
+                        onImageDownloaded(articleMetadata, image)
                     }
                 }
             }
 
-            if (minimalArticles.isEmpty()) {
+            if (articleMetadatas.isEmpty()) {
                 onEveryImageDownloaded()
             }
 
-            expectedArticleAmount = minimalArticles.size
+            expectedArticleAmount = articleMetadatas.size
         }
     }
 
