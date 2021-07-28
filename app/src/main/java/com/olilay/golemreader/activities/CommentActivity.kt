@@ -2,19 +2,12 @@ package com.olilay.golemreader.activities
 
 import android.os.Bundle
 import com.olilay.golemreader.R
-import com.olilay.golemreader.adapter.ArticleAdapter
-import com.olilay.golemreader.adapter.CommentAdapter
 import com.olilay.golemreader.adapter.PostAdapter
-import com.olilay.golemreader.models.article.ArticleMetadata
-import com.olilay.golemreader.controller.CommentOverviewParseController
 import com.olilay.golemreader.controller.CommentParseController
 import com.olilay.golemreader.models.comment.Comment
 import com.olilay.golemreader.models.comment.CommentMetadata
-import java.lang.Exception
-import java.lang.RuntimeException
-import java.net.URL
 
-
+// TODO: move refresh etc. up, will remove lots of duplicate code
 class CommentActivity : CardViewActivity(
     R.layout.activity_comment,
     R.id.comment_swiperefresh,
