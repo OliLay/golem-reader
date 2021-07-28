@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    android:id="@+id/POST_card_view">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- POST CONTENT -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/post_heading"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- SEPARATOR LINE -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:id="@+id/separator1"
+            android:layout_below="@id/post_heading"
+            android:background="?android:attr/listDivider"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp" />
+
+        <!-- POST CONTENT -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/post_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/separator1" />
+
+        <!-- SEPARATOR LINE -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:id="@+id/separator2"
+            android:layout_below="@id/post_content"
+            android:background="?android:attr/listDivider"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp" />
+
+        <!-- POST AUTHOR -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/post_author"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/separator2" />
+
+        <!-- POST ICON DATE -->
+        <ImageView
+            android:id="@+id/post_icon_date"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_toStartOf="@id/post_date"
+            android:layout_marginEnd="4dp"
+            android:layout_below="@id/separator2"
+            android:contentDescription="@string/image_description"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_date" />
+
+        <!-- POST DATE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/post_date"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/separator2" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
