@@ -1,8 +1,10 @@
 package com.olilay.golemreader.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.olilay.golemreader.activities.CommentActivity
 import com.olilay.golemreader.databinding.CommentViewBinding
 import com.olilay.golemreader.models.comment.CommentMetadata
 
@@ -31,11 +33,11 @@ class CommentAdapter(private val data: List<CommentMetadata>) :
         holder.commentViewBinding.commentAuthor.text = item.author
         holder.commentViewBinding.commentAnswerCount.text = item.answerCount.toString()
 
-        //   holder.commentViewBinding.root.setOnClickListener { v ->
-        //      val intent = Intent(v.context, CommentActivity::class.java)
-        //      intent.putExtra("commentMetadata", item)
-        //      v.context.startActivity(intent)
-        // }
+        holder.commentViewBinding.root.setOnClickListener { v ->
+            val intent = Intent(v.context, CommentActivity::class.java)
+            intent.putExtra("commentMetadata", item)
+            v.context.startActivity(intent)
+        }
     }
 
     override fun getItemCount() = data.size

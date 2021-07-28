@@ -20,6 +20,7 @@
         </activity>
         <activity android:name="com.olilay.golemreader.activities.ArticleActivity" />
         <activity android:name="com.olilay.golemreader.activities.CommentOverviewActivity"/>
+        <activity android:name="com.olilay.golemreader.activities.CommentActivity" />
     </application>
 
 </manifest>
