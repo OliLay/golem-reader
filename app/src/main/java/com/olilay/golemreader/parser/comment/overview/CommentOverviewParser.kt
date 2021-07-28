@@ -1,5 +1,7 @@
 package com.olilay.golemreader.parser.comment.overview
 
+import android.text.Html
+import android.text.Html.FROM_HTML_MODE_COMPACT
 import android.util.Log
 import com.olilay.golemreader.models.article.*
 import com.olilay.golemreader.models.article.page.FirstPage
@@ -53,7 +55,8 @@ class CommentOverviewParser {
     }
 
     private fun getHeading(element: Element): String {
-        return element.select("a").first()?.html() ?: ""
+        val html = element.select("a").first()?.html() ?: ""
+        return Html.fromHtml(html, FROM_HTML_MODE_COMPACT).toString()
     }
 
     private fun getUrl(element: Element): URL {
@@ -63,7 +66,7 @@ class CommentOverviewParser {
             URL(urlString)
         } catch (e: MalformedURLException) {
             Log.e("CommentOverviewParser", "Could not parse URL '$urlString'")
-            URL("https://google.de")
+            throw e
         }
     }
 
