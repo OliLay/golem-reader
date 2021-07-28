@@ -17,8 +17,20 @@
             android:id="@+id/comment_heading"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/comment_answer_count"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <!-- COMMENT ANSWER COUNT -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/comment_answer_count"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="7dp" />
 
         <!-- COMMENT ICON DATE -->
         <ImageView

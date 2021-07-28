@@ -32,23 +32,28 @@ class CommentOverviewParser {
         val commentMetadatas = ArrayList<CommentMetadata>()
 
         val jsoupDocument = ParserUtils.getDocument(commentsUrl.toString())
-        val commentElements = jsoupDocument.select("ol[class=list-comments]").select("li")
+        val commentElements = jsoupDocument.select("ol[class=list-comments]")
+            .select("li")
 
         for (element in commentElements) {
             val heading = getHeading(element)
-            val url = getUrl(element)
-            val date = getDate(element)
-            val author = getAuthor(element)
 
-            val metadata = CommentMetadata(heading, url, author, date)
-            commentMetadatas.add(metadata)
+            if (heading.isNotBlank()) {
+                val url = getUrl(element)
+                val date = getDate(element)
+                val author = getAuthor(element)
+                val answerCount = getAnswerCount(element);
+
+                val metadata = CommentMetadata(heading, url, author, date, answerCount)
+                commentMetadatas.add(metadata)
+            }
         }
 
         return commentMetadatas
     }
 
     private fun getHeading(element: Element): String {
-        return element.select("a").html()
+        return element.select("a").first()?.html() ?: ""
     }
 
     private fun getUrl(element: Element): URL {
@@ -79,5 +84,9 @@ class CommentOverviewParser {
 
     private fun getAuthor(element: Element): String {
         return element.select("strong").html()
+    }
+
+    private fun getAnswerCount(element: Element): Int {
+        return element.select("p[class=count]").html().toIntOrNull() ?: 0
     }
 }

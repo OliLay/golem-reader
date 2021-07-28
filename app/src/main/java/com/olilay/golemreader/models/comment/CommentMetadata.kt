@@ -15,6 +15,7 @@ open class CommentMetadata(
     open var url: URL,
     open var author: String,
     open var dateCreated: Date,
+    open var answerCount: Int,
 ) : Parcelable {
 
     fun getCreatedDateString(): String {

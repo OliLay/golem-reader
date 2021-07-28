@@ -29,6 +29,7 @@ class CommentAdapter(private val data: List<CommentMetadata>) :
         holder.commentViewBinding.commentDate.text = "${item.getCreatedDateString()},"
         holder.commentViewBinding.commentTime.text = item.getCreatedTimeString()
         holder.commentViewBinding.commentAuthor.text = item.author
+        holder.commentViewBinding.commentAnswerCount.text = item.answerCount.toString()
 
         //   holder.commentViewBinding.root.setOnClickListener { v ->
         //      val intent = Intent(v.context, CommentActivity::class.java)
