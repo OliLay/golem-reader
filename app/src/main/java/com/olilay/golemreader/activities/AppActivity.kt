@@ -11,7 +11,7 @@ import com.olilay.golemreader.R
  * Use this activity class for every activity in the app as super class.
  * Sets Toolbar.
  */
-abstract class AppActivity() : AppCompatActivity() {
+abstract class AppActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

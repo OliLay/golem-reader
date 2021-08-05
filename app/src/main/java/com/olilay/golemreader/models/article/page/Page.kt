@@ -33,6 +33,7 @@ abstract class Page(
         articleElements.select("ul[class=social-tools]")?.remove()
         articleElements.select("div[class=tags]")?.remove()
         articleElements.select("div[class=topictags]")?.remove()
+        articleElements.select("ul[class=social-tools social-tools--footer]")?.remove()
     }
 
 
